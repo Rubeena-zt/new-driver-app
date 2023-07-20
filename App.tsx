@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import TotalAlarms from './components/widgets/TotalAlarms';
+import Testing from './components/widgets/Testing';
 
 function App(): JSX.Element {
   return (
@@ -21,6 +22,7 @@ function App(): JSX.Element {
       </View>
       <View style={styles.thirdPart}>
         <Text>3rd part</Text>
+        <Testing />
       </View>
     </View>
   );
@@ -28,9 +30,9 @@ function App(): JSX.Element {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    flex:1,
+    flex: 1,
     flexDirection: 'row',
-    backgroundColor:"#ECF9FF"
+    backgroundColor: '#ECF9FF',
   },
   firstPart: {
     width: '20%',
