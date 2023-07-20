@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
-import Filter from '../images/filter.png';
+import Filter from '../images/filter1.svg';
 
 const TotalAlarms = () => {
   const [totalAlarms, setTotalAlarms] = useState([]);
@@ -13,7 +13,7 @@ const TotalAlarms = () => {
   const year = today.getFullYear();
   // const formattedDate = today.toISOString().split('T')[0];
   const formattedDate = `${day}-${month}-${year}`;
-  console.log(formattedDate);
+  console.log('formattedDate', formattedDate);
   const apiDate = `${year}-${month}-${day}`;
   console.log('apidate', apiDate);
 
@@ -23,8 +23,7 @@ const TotalAlarms = () => {
     const fetchData = async () => {
       try {
         // Define the API endpoint URL
-        const apiUrl =
-          'https://test.g-trackit.com:8090/apis/v1/vehicles/alarms?date=2023-07-19';
+        const apiUrl = `https://test.g-trackit.com:8090/apis/v1/vehicles/alarms?date=${apiDate}`;
         const headers = {
           'Content-Type': 'application/json',
           'Api-Key': 'zaeemkey1',
@@ -38,10 +37,10 @@ const TotalAlarms = () => {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        // console.log('alarmdata', data);
+        console.log('alarmdata', data);
         console.log('length', data?.length);
         setTotalAlarms(data);
-        console.log('type', typeof data[0].createtime);
+        // console.log('type', typeof data[0].plate);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -74,7 +73,7 @@ const TotalAlarms = () => {
         </View>
       ))}
       <View style={styles.line} />
-      {/* <Filter /> */}
+      <View>{/* <Filter /> */}</View>
     </View>
   );
 };
