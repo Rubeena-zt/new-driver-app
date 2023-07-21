@@ -15,10 +15,11 @@ import {FilterComponent, RefreshIcon} from '../../assets/SvgComponents';
 const TotalAlarms = () => {
   const [totalAlarms, setTotalAlarms] = useState([]);
   const [modalVisible, setModalVisible] = useState(true);
-  const [selectedValue, setSelectedValue] = useState('Month');
+  const [selectedValue, setSelectedValue] = useState('Day');
+  const [intervalValue, setIntervalValue] = useState('Day');
 
   // Define your list of options for the dropdown
-  const dropdownOptions = ['Day', 'Month', 'Year'];
+  // const dropdownOptions = ['Day', 'Month', 'Year'];
 
   const today = new Date();
   console.log('today', today);
@@ -137,35 +138,39 @@ const TotalAlarms = () => {
                 <SelectPicker.Item key="Year" label="Year" value="Year" />
               </SelectPicker> */}
 
-              <View>
+              {/* <View> */}
+              <View style={styles.intervalBox}>
+                <Text
+                  style={{
+                    marginRight: moderateScale(5),
+                    fontSize: moderateScale(13),
+                    marginTop: moderateScale(5),
+                  }}>
+                  Interval
+                </Text>
                 <View
                   style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    width: 80,
-                    justifyContent: 'space-between',
+                    // borderColor: 'gray',
+                    borderWidth: 1,
+                    // backgroundColor: 'green',
+                    height: moderateScale(30),
+                    marginTop: 6,
                   }}>
-                  <TextInput
-                    style={{
-                      borderColor: 'gray',
-                      borderWidth: 1,
-                      paddingHorizontal: 10,
-                      marginBottom: 10,
-                    }}
-                    value={selectedValue}
-                    editable={false}
-                  />
+                  <TextInput editable={false} />
                   <View>
                     <Picker
                       selectedValue={selectedValue}
-                      onValueChange={(itemValue, index) =>
+                      onValueChange={(itemValue, itemIndex) =>
                         setSelectedValue(itemValue)
                       }
                       style={{
-                        width: 15,
-                        height: 15,
+                        paddingHorizontal: 8,
+                        marginBottom: 10,
+                        borderColor: 'gray',
                         borderWidth: 1,
-                        backgroundColor: 'aqua',
+                        // backgroundColor: 'red',
+                        marginTop: -60,
+                        width: moderateScale(80),
                       }}>
                       <Picker.Item label="Day" value="Day" />
                       <Picker.Item label="Month" value="Month" />
@@ -173,6 +178,23 @@ const TotalAlarms = () => {
                     </Picker>
                   </View>
                 </View>
+              </View>
+              <View style={styles.intervalBox}>
+                <Text
+                  style={{
+                    marginRight: moderateScale(5),
+                    fontSize: moderateScale(13),
+                    marginTop: moderateScale(5),
+                  }}>
+                  Date
+                </Text>
+                <TextInput
+                  style={{
+                    borderColor: 'grey',
+                    borderWidth: 1,
+                    width: moderateScale(80),
+                  }}
+                />
               </View>
             </View>
           </View>
@@ -253,10 +275,11 @@ const styles = StyleSheet.create({
   modalView: {
     width: 300,
     height: 300,
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     borderRadius: 20,
     zIndex: 100,
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    padding: moderateScale(15),
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -285,6 +308,14 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
+  },
+
+  intervalBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom:5,
   },
 });
 
