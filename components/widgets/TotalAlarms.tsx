@@ -7,30 +7,44 @@ import {
   TouchableOpacity,
   Pressable,
   TextInput,
+  FlatList
 } from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 import {Picker} from '@react-native-picker/picker';
+import {Calendar} from 'react-native-calendars';
 import {FilterComponent, RefreshIcon} from '../../assets/SvgComponents';
+
+const today = new Date();
+console.log('today', today);
+const day = String(today.getDate()).padStart(2, '0');
+const month = String(today.getMonth() + 1).padStart(2, '0');
+const year = today.getFullYear();
+// const formattedDate = today.toISOString().split('T')[0];
+const formattedDate = `${day}-${month}-${year}`;
+console.log('formattedDate', formattedDate);
+const apiDate = `${year}-${month}-${day}`;
+console.log('apidate', apiDate);
 
 const TotalAlarms = () => {
   const [totalAlarms, setTotalAlarms] = useState([]);
   const [modalVisible, setModalVisible] = useState(true);
   const [selectedValue, setSelectedValue] = useState('Day');
   const [intervalValue, setIntervalValue] = useState('Day');
+  const [selectedDate, setSelectedDate] = useState(apiDate);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedAlarmText, setSelectedAlarmText] = useState('');
 
-  // Define your list of options for the dropdown
-  // const dropdownOptions = ['Day', 'Month', 'Year'];
+  const uniqueAlarmTexts = [
+    ...new Set(totalAlarms.map(item => item.alarmtext)),
+  ];
+  console.log('uniqueAlarmTexts', uniqueAlarmTexts);
+  const handleAlarmTextChange = itemValue => {
+    setSelectedAlarmText(itemValue);
+  };
 
-  const today = new Date();
-  console.log('today', today);
-  const day = String(today.getDate()).padStart(2, '0');
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const year = today.getFullYear();
-  // const formattedDate = today.toISOString().split('T')[0];
-  const formattedDate = `${day}-${month}-${year}`;
-  console.log('formattedDate', formattedDate);
-  const apiDate = `${year}-${month}-${day}`;
-  console.log('apidate', apiDate);
+  const filteredData = totalAlarms.filter(
+    item => item.alarmtext.trim() === selectedAlarmText,
+  );
 
   const limitedData = totalAlarms?.slice(0, 10);
 
@@ -48,10 +62,15 @@ const TotalAlarms = () => {
     console.log('call hgyigjiknolk,');
   };
 
+  const handleDateSelect = date => {
+    setSelectedDate(date.dateString);
+    setShowCalendar(false);
+  };
+
   const fetchData = useCallback(async () => {
     try {
       // Define the API endpoint URL
-      const apiUrl = `https://test.g-trackit.com:8090/apis/v1/vehicles/alarms?date=${apiDate}`;
+      const apiUrl = `https://test.g-trackit.com:8090/apis/v1/vehicles/alarms?date=${selectedDate}`;
       const headers = {
         'Content-Type': 'application/json',
         'Api-Key': 'zaeemkey1',
@@ -88,7 +107,7 @@ const TotalAlarms = () => {
               <Text style={styles.createTime}>{totalAlarms?.length}</Text>
             </Text>
           </Pressable>
-          <Text style={{marginTop: moderateScale(15)}}>{formattedDate}</Text>
+          <Text style={{marginTop: moderateScale(15)}}>{selectedDate}</Text>
         </View>
         <View style={styles.headerRow}>
           <Text style={styles.headerCell1}>Time</Text>
@@ -143,7 +162,7 @@ const TotalAlarms = () => {
                 <Text
                   style={{
                     marginRight: moderateScale(5),
-                    fontSize: moderateScale(13),
+                    fontSize: moderateScale(10),
                     marginTop: moderateScale(5),
                   }}>
                   Interval
@@ -169,7 +188,7 @@ const TotalAlarms = () => {
                         borderColor: 'gray',
                         borderWidth: 1,
                         // backgroundColor: 'red',
-                        marginTop: -60,
+                        marginTop: -50,
                         width: moderateScale(80),
                       }}>
                       <Picker.Item label="Day" value="Day" />
@@ -183,17 +202,75 @@ const TotalAlarms = () => {
                 <Text
                   style={{
                     marginRight: moderateScale(5),
-                    fontSize: moderateScale(13),
+                    fontSize: moderateScale(10),
                     marginTop: moderateScale(5),
                   }}>
                   Date
                 </Text>
-                <TextInput
-                  style={{
-                    borderColor: 'grey',
-                    borderWidth: 1,
-                    width: moderateScale(80),
-                  }}
+                {!showCalendar && (
+                  <TextInput
+                    style={styles.inputCalendar}
+                    placeholder="Select Date"
+                    value={selectedDate}
+                    editable={false} // Prevent direct text input
+                  />
+                )}
+                <TouchableOpacity
+                  style={styles.dateIcon}
+                  onPress={() => setShowCalendar(true)}>
+                  <Text style={styles.iconText}>📅</Text>
+                </TouchableOpacity>
+                {showCalendar && (
+                  <Calendar
+                    onDayPress={date => {
+                      handleDateSelect(date);
+                      setShowCalendar(false);
+                    }}
+                    markedDates={{
+                      [selectedDate]: {
+                        selected: true,
+                        selectedColor: 'blue',
+                      },
+                    }}
+                  />
+                )}
+              </View>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#144072',
+                  width: 60,
+                  height: 30,
+                  borderRadius: 5,
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+                onPress={() => fetchData()}>
+                <Text>Apply</Text>
+              </TouchableOpacity>
+              <View style={styles.line} />
+              <View>
+                <Text>Select Alarm</Text>
+                <Picker
+                  selectedValue={selectedAlarmText}
+                  onValueChange={handleAlarmTextChange}>
+                  <Picker.Item label="All" value="" />
+                  {uniqueAlarmTexts.map((alarmText, index) => (
+                    <Picker.Item
+                      key={index}
+                      label={alarmText.trim()}
+                      value={alarmText.trim()}
+                    />
+                  ))}
+                </Picker>
+
+                <FlatList
+                  data={filteredData}
+                  keyExtractor={item => item.id.toString()}
+                  renderItem={({item}) => (
+                    <View style={{marginTop: 10}}>
+                      <Text>Alarm Text: {item.alarmtext}</Text>
+                    </View>
+                  )}
                 />
               </View>
             </View>
@@ -315,7 +392,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    marginBottom:5,
+    marginBottom: 5,
+  },
+  dateIcon: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
+  },
+  iconText: {
+    fontSize: 20,
+  },
+  inputCalendar: {
+    borderColor: '#000',
+    borderWidth: 1,
+    // width:'100%',
+    width: moderateScale(81),
   },
 });
 
