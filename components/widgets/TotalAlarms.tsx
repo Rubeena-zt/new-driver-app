@@ -27,12 +27,12 @@ console.log('apidate', apiDate);
 
 const TotalAlarms = () => {
   const [totalAlarms, setTotalAlarms] = useState([]);
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
   const [selectedValue, setSelectedValue] = useState('Day');
-  const [intervalValue, setIntervalValue] = useState('Day');
   const [selectedDate, setSelectedDate] = useState(apiDate);
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedAlarmText, setSelectedAlarmText] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
 
   const uniqueAlarmTexts = [
     ...new Set(totalAlarms.map(item => item.alarmtext)),
@@ -41,17 +41,30 @@ const TotalAlarms = () => {
   const handleAlarmTextChange = itemValue => {
     setSelectedAlarmText(itemValue);
   };
+  const handleApplyButtonPress = () => {
+    const selectedAlarm = selectedAlarmText.trim();
+    if (selectedAlarm === '') {
+      setFilteredData(totalAlarms); // If 'All Alarms' is selected, show all data
+    } else {
+      const filtered = totalAlarms.filter(
+        item => item.alarmtext.trim() === selectedAlarm,
+      );
+      setFilteredData(filtered);
+    }
+    setModalVisible(false); // Close the modal after applying the filter
+  };
+
+  useEffect(() => {
+    // Set initial filtered data when component mounts
+    setFilteredData(totalAlarms);
+  }, [totalAlarms]);
 
   // Assuming selectedDate is in the "2023-07-23" format
   const formattedSelectedDate = `${selectedDate.split('-')[2]}-${
     selectedDate.split('-')[1]
   }-${selectedDate.split('-')[0]}`;
 
-  const filteredData = totalAlarms.filter(
-    item => item.alarmtext.trim() === selectedAlarmText,
-  );
-
-  const limitedData = totalAlarms?.slice(0, 10);
+  const limitedFilteredData = filteredData?.slice(0, 10);
 
   const handleOpenModal = () => {
     setModalVisible(true);
@@ -121,7 +134,7 @@ const TotalAlarms = () => {
           <Text style={styles.headerCell}>Plate Number</Text>
           <Text style={styles.headerCell}>Alarm</Text>
         </View>
-        {limitedData?.map((rowData, index) => (
+        {limitedFilteredData?.map((rowData, index) => (
           <View key={index} style={styles.row}>
             <Text style={styles.cell1}>
               {rowData?.createtime.split(' ')[1]}
@@ -219,7 +232,7 @@ const TotalAlarms = () => {
                     style={styles.inputCalendar}
                     placeholder="Select Date"
                     value={selectedDate}
-                    editable={false} // Prevent direct text input
+                    editable={false}
                   />
                 )}
                 <TouchableOpacity
@@ -243,43 +256,59 @@ const TotalAlarms = () => {
                 )}
               </View>
               <TouchableOpacity
-                style={{
-                  backgroundColor: '#144072',
-                  width: 60,
-                  height: 30,
-                  borderRadius: 5,
-                  display: 'flex',
-                  justifyContent: 'center',
-                }}
+                style={styles.ApplyButton}
                 onPress={() => fetchData()}>
-                <Text>Apply</Text>
+                <Text style={styles.applyText}>Apply</Text>
               </TouchableOpacity>
               <View style={styles.line} />
-              <View>
-                <Text>Select Alarm</Text>
-                <Picker
-                  selectedValue={selectedAlarmText}
-                  onValueChange={handleAlarmTextChange}>
-                  {/* <Picker.Item label="All" value="" /> */}
-                  {uniqueAlarmTexts.map((alarmText, index) => (
-                    <Picker.Item
-                      key={index}
-                      label={alarmText.trim()}
-                      value={alarmText.trim()}
-                    />
-                  ))}
-                </Picker>
 
-                {/* <FlatList
-                  data={filteredData}
-                  keyExtractor={item => item.id.toString()}
-                  renderItem={({item}) => (
-                    <View style={{marginTop: 10}}>
-                      <Text>{item.alarmtext}</Text>
-                    </View>
-                  )}
-                /> */}
+              <View style={styles.intervalBox}>
+                <Text
+                  style={{
+                    marginRight: moderateScale(5),
+                    fontSize: moderateScale(10),
+                    marginTop: moderateScale(5),
+                  }}>
+                  Select Alarm
+                </Text>
+                <View
+                  style={{
+                    // borderColor: 'gray',
+                    borderWidth: 1,
+                    // backgroundColor: 'green',
+                    height: moderateScale(30),
+                    marginTop: 6,
+                  }}>
+                  <TextInput editable={false} />
+                  <View>
+                    <Picker
+                      selectedValue={selectedAlarmText}
+                      onValueChange={handleAlarmTextChange}
+                      style={{
+                        paddingHorizontal: 8,
+                        marginBottom: 10,
+                        borderColor: 'gray',
+                        borderWidth: 1,
+                        // backgroundColor: 'red',
+                        marginTop: -50,
+                        width: moderateScale(80),
+                      }}>
+                      {uniqueAlarmTexts.map((alarmText, index) => (
+                        <Picker.Item
+                          key={index}
+                          label={alarmText.trim()}
+                          value={alarmText.trim()}
+                        />
+                      ))}
+                    </Picker>
+                  </View>
+                </View>
               </View>
+              <TouchableOpacity
+                style={styles.ApplyButton}
+                onPress={handleApplyButtonPress}>
+                <Text style={styles.applyText}>Apply</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -345,6 +374,7 @@ const styles = StyleSheet.create({
     height: 1,
     width: '100%',
     backgroundColor: '#bbb',
+    marginTop: 4,
   },
   createTime: {
     color: '#db676b',
@@ -414,6 +444,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     // width:'100%',
     width: moderateScale(81),
+  },
+  ApplyButton: {
+    backgroundColor: '#144072',
+    width: 60,
+    height: 30,
+    borderRadius: 5,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  applyText: {
+    color: '#fff',
+    textAlign: 'center',
   },
 });
 
