@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import TotalAlarms from './components/widgets/TotalAlarms';
 import Testing from './components/widgets/Testing';
+import AlarmStatistics from './components/widgets/AlarmStatistics';
 
 function App(): JSX.Element {
   return (
@@ -17,12 +18,15 @@ function App(): JSX.Element {
         <Text>1st part</Text>
       </View>
       <View style={styles.secondPart}>
-        <Text>2nd part</Text>
-        <TotalAlarms />
+        {/* <Text>2nd part</Text> */}
+        <View>
+          <TotalAlarms />
+          <AlarmStatistics />
+        </View>
       </View>
       <View style={styles.thirdPart}>
         <Text>3rd part</Text>
-        <Testing />
+        {/* <Testing /> */}
       </View>
     </View>
   );

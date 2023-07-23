@@ -37,7 +37,7 @@ const TotalAlarms = () => {
   const uniqueAlarmTexts = [
     ...new Set(totalAlarms.map(item => item.alarmtext)),
   ];
-  console.log('uniqueAlarmTexts', uniqueAlarmTexts);
+  // console.log('uniqueAlarmTexts', uniqueAlarmTexts);
   const handleAlarmTextChange = itemValue => {
     setSelectedAlarmText(itemValue);
   };
