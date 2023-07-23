@@ -53,6 +53,8 @@ const AlarmStatistics = () => {
     backgroundGradientTo: '#ffffff',
     decimalPlaces: 0, // No decimal places for values
     color: (opacity = 0.8) => `rgba(22, 128, 204,${opacity})`,
+    strokeWidth: 2,
+    barPercentage: 0.75,
   };
 
   return (
@@ -64,6 +66,20 @@ const AlarmStatistics = () => {
           datasets: [
             {
               data: dataForBarChart.map(item => item.count),
+              colors: [
+                (opacity = 1) => `#576EB2`,
+                (opacity = 1) => `#63A6B9`,
+                (opacity = 1) => `#81A9E2`,
+                (opacity = 1) => `#BD6499`,
+                (opacity = 1) => `#F2B6B6`,
+                (opacity = 1) => `#F66969`,
+                (opacity = 1) => `#FBE38A`,
+                (opacity = 1) => `#265599`,
+                (opacity = 1) => `#D9D9D9`,
+                (opacity = 1) => `#F68121`,
+                (opacity = 1) => `#576EB2`,
+                (opacity = 1) => `#78a9ff`,
+              ],
             },
           ],
         }}
@@ -71,7 +87,9 @@ const AlarmStatistics = () => {
         height={220}
         chartConfig={chartConfig}
         yAxisLabel=""
-        // yAxisSuffix=" times" // Add the yAxisSuffix prop here
+        withCustomBarColorFromData={true}
+        flatColor={true}
+        yAxisSuffix="" // Add the yAxisSuffix prop here
       />
     </View>
   );

@@ -10,6 +10,7 @@ import {
 import TotalAlarms from './components/widgets/TotalAlarms';
 import Testing from './components/widgets/Testing';
 import AlarmStatistics from './components/widgets/AlarmStatistics';
+import {moderateScale} from 'react-native-size-matters';
 
 function App(): JSX.Element {
   return (
@@ -20,8 +21,12 @@ function App(): JSX.Element {
       <View style={styles.secondPart}>
         {/* <Text>2nd part</Text> */}
         <View>
-          <TotalAlarms />
-          <AlarmStatistics />
+          <View style={{marginBottom: moderateScale(10)}}>
+            <TotalAlarms />
+          </View>
+          <View>
+            <AlarmStatistics />
+          </View>
         </View>
       </View>
       <View style={styles.thirdPart}>
