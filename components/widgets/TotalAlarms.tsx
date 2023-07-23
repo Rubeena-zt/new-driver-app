@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Pressable,
   TextInput,
-  FlatList
+  FlatList,
 } from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 import {Picker} from '@react-native-picker/picker';
@@ -41,6 +41,11 @@ const TotalAlarms = () => {
   const handleAlarmTextChange = itemValue => {
     setSelectedAlarmText(itemValue);
   };
+
+  // Assuming selectedDate is in the "2023-07-23" format
+  const formattedSelectedDate = `${selectedDate.split('-')[2]}-${
+    selectedDate.split('-')[1]
+  }-${selectedDate.split('-')[0]}`;
 
   const filteredData = totalAlarms.filter(
     item => item.alarmtext.trim() === selectedAlarmText,
@@ -91,7 +96,7 @@ const TotalAlarms = () => {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  }, [apiDate, setTotalAlarms]);
+  }, [selectedDate]);
 
   useEffect(() => {
     fetchData();
@@ -107,7 +112,9 @@ const TotalAlarms = () => {
               <Text style={styles.createTime}>{totalAlarms?.length}</Text>
             </Text>
           </Pressable>
-          <Text style={{marginTop: moderateScale(15)}}>{selectedDate}</Text>
+          <Text style={{marginTop: moderateScale(15)}}>
+            {formattedSelectedDate}
+          </Text>
         </View>
         <View style={styles.headerRow}>
           <Text style={styles.headerCell1}>Time</Text>
@@ -253,7 +260,7 @@ const TotalAlarms = () => {
                 <Picker
                   selectedValue={selectedAlarmText}
                   onValueChange={handleAlarmTextChange}>
-                  <Picker.Item label="All" value="" />
+                  {/* <Picker.Item label="All" value="" /> */}
                   {uniqueAlarmTexts.map((alarmText, index) => (
                     <Picker.Item
                       key={index}
@@ -263,15 +270,15 @@ const TotalAlarms = () => {
                   ))}
                 </Picker>
 
-                <FlatList
+                {/* <FlatList
                   data={filteredData}
                   keyExtractor={item => item.id.toString()}
                   renderItem={({item}) => (
                     <View style={{marginTop: 10}}>
-                      <Text>Alarm Text: {item.alarmtext}</Text>
+                      <Text>{item.alarmtext}</Text>
                     </View>
                   )}
-                />
+                /> */}
               </View>
             </View>
           </View>
