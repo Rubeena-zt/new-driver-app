@@ -27,12 +27,29 @@ import {setDate} from '../../features/dateSlice';
 // console.log('apidate', apiDate);
 
 const TotalAlarms = () => {
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  const years = ['2023', '2024', '2025', '2026', '2027'];
   const dispatch = useDispatch();
   const selectedDate = useSelector(state => state.date);
   const [totalAlarms, setTotalAlarms] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedValue, setSelectedValue] = useState('Day');
   // const [selectedDate, setSelectedDate] = useState(apiDate);
+  const [selectedMonth, setSelectedMonth] = useState(months[0]);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedAlarmText, setSelectedAlarmText] = useState('');
   const [filteredData, setFilteredData] = useState([]);
@@ -72,10 +89,6 @@ const TotalAlarms = () => {
     setModalVisible(true);
     console.log('The filter button was pressed');
   };
-  // const handleCloseModal = () => {
-  //   setModalVisible(false);
-  //   console.log('The filter button was closed');
-  // };
 
   const handleRefresh = () => {
     fetchData();
@@ -93,6 +106,10 @@ const TotalAlarms = () => {
     fetchData();
     setShowCalendar(false);
     setModalVisible(false);
+  };
+
+  const handleMonthApply = () => {
+    
   };
 
   const fetchData = useCallback(async () => {
@@ -219,6 +236,7 @@ const TotalAlarms = () => {
                   </View>
                 </View>
               </View>
+
               <View style={styles.intervalBox}>
                 <Text
                   style={{
@@ -228,6 +246,7 @@ const TotalAlarms = () => {
                   }}>
                   Date
                 </Text>
+
                 {!showCalendar && (
                   <TextInput
                     style={styles.inputCalendar}
@@ -236,12 +255,14 @@ const TotalAlarms = () => {
                     editable={false}
                   />
                 )}
+
                 <TouchableOpacity
                   style={styles.dateIcon}
                   onPress={() => setShowCalendar(true)}>
                   <Text style={styles.iconText}>📅</Text>
                 </TouchableOpacity>
-                {showCalendar && (
+
+                {showCalendar && selectedValue === 'Day' && (
                   <Calendar
                     onDayPress={date => {
                       handleDateSelect(date);
@@ -256,63 +277,135 @@ const TotalAlarms = () => {
                   />
                 )}
               </View>
-              <TouchableOpacity
-                style={styles.ApplyButton}
-                onPress={
-                  () => handleDateApply()
-                  // fetchData()
-                }>
-                <Text style={styles.applyText}>Apply</Text>
-              </TouchableOpacity>
-              <View style={styles.line} />
+              {showCalendar && selectedValue === 'Day' && (
+                <TouchableOpacity
+                  style={styles.ApplyButton}
+                  onPress={
+                    () => handleDateApply()
+                    // fetchData()
+                  }>
+                  <Text style={styles.applyText}>Apply</Text>
+                </TouchableOpacity>
+              )}
 
-              <View style={styles.intervalBox}>
-                <Text
-                  style={{
-                    marginRight: moderateScale(5),
-                    fontSize: moderateScale(10),
-                    marginTop: moderateScale(5),
-                  }}>
-                  Select Alarm
-                </Text>
-                <View
-                  style={{
-                    // borderColor: 'gray',
-                    borderWidth: 1,
-                    // backgroundColor: 'green',
-                    height: moderateScale(30),
-                    marginTop: 6,
-                  }}>
-                  <TextInput editable={false} />
-                  <View>
-                    <Picker
-                      selectedValue={selectedAlarmText}
-                      onValueChange={handleAlarmTextChange}
-                      style={{
-                        paddingHorizontal: 8,
-                        marginBottom: 10,
-                        borderColor: 'gray',
-                        borderWidth: 1,
-                        // backgroundColor: 'red',
-                        marginTop: -50,
-                        width: moderateScale(80),
-                      }}>
-                      {uniqueAlarmTexts.map((alarmText, index) => (
-                        <Picker.Item
-                          key={index}
-                          label={alarmText.trim()}
-                          value={alarmText.trim()}
-                        />
-                      ))}
-                    </Picker>
+              {selectedValue === 'Month' && (
+                <View style={styles.intervalBox}>
+                  <Text
+                    style={{
+                      marginRight: moderateScale(5),
+                      fontSize: moderateScale(10),
+                      marginTop: moderateScale(5),
+                    }}>
+                    Select Month:
+                  </Text>
+                  <View style={styles.pickerBox}>
+                    <TextInput editable={false} />
+                    <View>
+                      <Picker
+                        selectedValue={selectedMonth}
+                        onValueChange={itemValue => setSelectedMonth(itemValue)}
+                        style={styles.pickerStyle}>
+                        {months.map((month, index) => (
+                          <Picker.Item
+                            key={index}
+                            label={month}
+                            value={month}
+                          />
+                        ))}
+                      </Picker>
+                    </View>
                   </View>
                 </View>
-              </View>
-              <TouchableOpacity
-                style={styles.ApplyButton}
-                onPress={handleApplyButtonPress}>
-                <Text style={styles.applyText}>Apply</Text>
-              </TouchableOpacity>
+              )}
+              {selectedValue === 'Month' && (
+                <View style={styles.intervalBox}>
+                  <Text
+                    style={{
+                      marginRight: moderateScale(5),
+                      fontSize: moderateScale(10),
+                      marginTop: moderateScale(5),
+                    }}>
+                    Year:
+                  </Text>
+                  <View style={styles.pickerBox}>
+                    <TextInput editable={false} />
+                    <View>
+                      <Picker
+                        selectedValue={selectedYear}
+                        onValueChange={itemValue => setSelectedYear(itemValue)}
+                        style={styles.pickerStyle}>
+                        {years.map((year, index) => (
+                          <Picker.Item key={index} label={year} value={year} />
+                        ))}
+                      </Picker>
+                    </View>
+                  </View>
+                </View>
+              )}
+
+              {!showCalendar && (
+                <TouchableOpacity
+                  style={styles.ApplyButton}
+                  onPress={
+                    () => handleMonthApply()
+                    // fetchData()
+                  }>
+                  <Text style={styles.applyText}>Apply</Text>
+                </TouchableOpacity>
+              )}
+              <View style={styles.line} />
+              {!showCalendar && (
+                <View style={styles.intervalBox}>
+                  <Text
+                    style={{
+                      marginRight: moderateScale(5),
+                      fontSize: moderateScale(10),
+                      marginTop: moderateScale(5),
+                    }}>
+                    Select Alarm
+                  </Text>
+                  <View
+                    style={{
+                      // borderColor: 'gray',
+                      borderWidth: 1,
+                      // backgroundColor: 'green',
+                      height: moderateScale(30),
+                      marginTop: 6,
+                    }}>
+                    <TextInput editable={false} />
+                    <View>
+                      <Picker
+                        selectedValue={selectedAlarmText}
+                        onValueChange={handleAlarmTextChange}
+                        style={{
+                          paddingHorizontal: 8,
+                          marginBottom: 10,
+                          borderColor: 'gray',
+                          borderWidth: 1,
+                          // backgroundColor: 'red',
+                          marginTop: -50,
+                          width: moderateScale(80),
+                        }}>
+                        {uniqueAlarmTexts.map((alarmText, index) => (
+                          <Picker.Item
+                            key={index}
+                            label={alarmText.trim()}
+                            value={alarmText.trim()}
+                          />
+                        ))}
+                      </Picker>
+                    </View>
+                  </View>
+                </View>
+              )}
+
+              {!showCalendar && (
+                <TouchableOpacity
+                  style={styles.ApplyButton}
+                  onPress={handleApplyButtonPress}>
+                  <Text style={styles.applyText}>Apply</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </Modal>
@@ -463,6 +556,19 @@ const styles = StyleSheet.create({
   applyText: {
     color: '#fff',
     textAlign: 'center',
+  },
+  pickerStyle: {
+    paddingHorizontal: 8,
+    marginBottom: 10,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginTop: -50,
+    width: moderateScale(80),
+  },
+  pickerBox: {
+    borderWidth: 1,
+    height: moderateScale(30),
+    marginTop: 6,
   },
 });
 

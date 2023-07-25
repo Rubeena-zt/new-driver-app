@@ -6,7 +6,7 @@ import AlarmStatistics from './components/widgets/AlarmStatistics';
 import {moderateScale} from 'react-native-size-matters';
 import DriverProfile from './components/widgets/DriverProfile';
 import store from './features/store';
-import MonthPicker from './components/widgets/Testingzzz';
+import Appss from './components/widgets/Testingzzz';
 
 function App(): JSX.Element {
   return (
@@ -29,9 +29,8 @@ function App(): JSX.Element {
         </View>
       </Provider>
       <View style={styles.thirdPart}>
-        <Text>3rd part</Text>
-        
-        <MonthPicker />
+        <Text>3rd part</Text> 
+        <Appss />
       </View>
     </View>
   );
