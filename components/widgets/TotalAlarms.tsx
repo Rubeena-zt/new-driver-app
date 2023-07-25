@@ -7,29 +7,32 @@ import {
   TouchableOpacity,
   Pressable,
   TextInput,
-  FlatList,
 } from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 import {Picker} from '@react-native-picker/picker';
 import {Calendar} from 'react-native-calendars';
+import {useDispatch, useSelector} from 'react-redux';
 import {FilterComponent, RefreshIcon} from '../../assets/SvgComponents';
+import {setDate} from '../../features/dateSlice';
 
-const today = new Date();
-console.log('today', today);
-const day = String(today.getDate()).padStart(2, '0');
-const month = String(today.getMonth() + 1).padStart(2, '0');
-const year = today.getFullYear();
-// const formattedDate = today.toISOString().split('T')[0];
-const formattedDate = `${day}-${month}-${year}`;
-console.log('formattedDate', formattedDate);
-const apiDate = `${year}-${month}-${day}`;
-console.log('apidate', apiDate);
+// const today = new Date();
+// console.log('today', today);
+// const day = String(today.getDate()).padStart(2, '0');
+// const month = String(today.getMonth() + 1).padStart(2, '0');
+// const year = today.getFullYear();
+// // const formattedDate = today.toISOString().split('T')[0];
+// const formattedDate = `${day}-${month}-${year}`;
+// console.log('formattedDate', formattedDate);
+// const apiDate = `${year}-${month}-${day}`;
+// console.log('apidate', apiDate);
 
 const TotalAlarms = () => {
+  const dispatch = useDispatch();
+  const selectedDate = useSelector(state => state.date);
   const [totalAlarms, setTotalAlarms] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedValue, setSelectedValue] = useState('Day');
-  const [selectedDate, setSelectedDate] = useState(apiDate);
+  // const [selectedDate, setSelectedDate] = useState(apiDate);
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedAlarmText, setSelectedAlarmText] = useState('');
   const [filteredData, setFilteredData] = useState([]);
@@ -51,11 +54,10 @@ const TotalAlarms = () => {
       );
       setFilteredData(filtered);
     }
-    setModalVisible(false); // Close the modal after applying the filter
+    setModalVisible(false);
   };
 
   useEffect(() => {
-    // Set initial filtered data when component mounts
     setFilteredData(totalAlarms);
   }, [totalAlarms]);
 
@@ -70,10 +72,10 @@ const TotalAlarms = () => {
     setModalVisible(true);
     console.log('The filter button was pressed');
   };
-  const handleCloseModal = () => {
-    setModalVisible(false);
-    console.log('The filter button was closed');
-  };
+  // const handleCloseModal = () => {
+  //   setModalVisible(false);
+  //   console.log('The filter button was closed');
+  // };
 
   const handleRefresh = () => {
     fetchData();
@@ -81,7 +83,14 @@ const TotalAlarms = () => {
   };
 
   const handleDateSelect = date => {
-    setSelectedDate(date.dateString);
+    // setSelectedDate(date.dateString);
+    // setShowCalendar(false);
+    // setModalVisible(false);
+    dispatch(setDate(date.dateString));
+  };
+
+  const handleDateApply = () => {
+    fetchData();
     setShowCalendar(false);
     setModalVisible(false);
   };
@@ -170,15 +179,6 @@ const TotalAlarms = () => {
           </Pressable>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              {/* <SelectPicker
-                selectedValue={intervalValue}
-                onValueChange={value => setIntervalValue(value)}>
-                <SelectPicker.Item key="Day" label="Day" value="Day" />
-                <SelectPicker.Item key="Month" label="Month" value="Month" />
-                <SelectPicker.Item key="Year" label="Year" value="Year" />
-              </SelectPicker> */}
-
-              {/* <View> */}
               <View style={styles.intervalBox}>
                 <Text
                   style={{
@@ -258,7 +258,10 @@ const TotalAlarms = () => {
               </View>
               <TouchableOpacity
                 style={styles.ApplyButton}
-                onPress={() => fetchData()}>
+                onPress={
+                  () => handleDateApply()
+                  // fetchData()
+                }>
                 <Text style={styles.applyText}>Apply</Text>
               </TouchableOpacity>
               <View style={styles.line} />

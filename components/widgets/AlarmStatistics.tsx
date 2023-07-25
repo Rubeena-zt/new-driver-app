@@ -2,18 +2,20 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, Dimensions, StyleSheet} from 'react-native';
 import {BarChart} from 'react-native-chart-kit';
 import {moderateScale} from 'react-native-size-matters';
+import {useSelector} from 'react-redux';
 
 const AlarmStatistics = () => {
-  const today = new Date();
-  console.log('today', today);
-  const day = String(today.getDate()).padStart(2, '0');
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const year = today.getFullYear();
-  // const formattedDate = today.toISOString().split('T')[0];
-  const formattedDate = `${day}-${month}-${year}`;
-  console.log('formattedDate', formattedDate);
-  const apiDate = `${year}-${month}-${day}`;
-  console.log('apidate', apiDate);
+  const selectedDate = useSelector((state) => state.date);
+  // const today = new Date();
+  // console.log('today', today);
+  // const day = String(today.getDate()).padStart(2, '0');
+  // const month = String(today.getMonth() + 1).padStart(2, '0');
+  // const year = today.getFullYear();
+  // // const formattedDate = today.toISOString().split('T')[0];
+  // const formattedDate = `${day}-${month}-${year}`;
+  // console.log('formattedDate', formattedDate);
+  // const apiDate = `${year}-${month}-${day}`;
+  // console.log('apidate', apiDate);
 
   const [totalAlarms, setTotalAlarms] = useState([]);
 
@@ -21,7 +23,7 @@ const AlarmStatistics = () => {
     const fetchData = async () => {
       try {
         // Define the API endpoint URL
-        const apiUrl = `https://test.g-trackit.com:8090/apis/v1/vehicles/alarms?date=${apiDate}`;
+        const apiUrl = `https://test.g-trackit.com:8090/apis/v1/vehicles/alarms?date=${selectedDate}`;
         const headers = {
           'Content-Type': 'application/json',
           'Api-Key': 'zaeemkey1',
@@ -44,7 +46,7 @@ const AlarmStatistics = () => {
     };
 
     fetchData();
-  }, []);
+  }, [selectedDate]);
 
   const uniqueAlarmTexts = [
     ...new Set(totalAlarms.map(item => item.alarmtext)),
