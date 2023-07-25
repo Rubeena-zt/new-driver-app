@@ -1,16 +1,27 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Dimensions} from 'react-native';
+import {View, Text, Dimensions, StyleSheet} from 'react-native';
 import {BarChart} from 'react-native-chart-kit';
+import {moderateScale} from 'react-native-size-matters';
 
 const AlarmStatistics = () => {
+  const today = new Date();
+  console.log('today', today);
+  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const year = today.getFullYear();
+  // const formattedDate = today.toISOString().split('T')[0];
+  const formattedDate = `${day}-${month}-${year}`;
+  console.log('formattedDate', formattedDate);
+  const apiDate = `${year}-${month}-${day}`;
+  console.log('apidate', apiDate);
+
   const [totalAlarms, setTotalAlarms] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Define the API endpoint URL
-        const apiUrl =
-          'https://test.g-trackit.com:8090/apis/v1/vehicles/alarms?date=2023-07-19';
+        const apiUrl = `https://test.g-trackit.com:8090/apis/v1/vehicles/alarms?date=${apiDate}`;
         const headers = {
           'Content-Type': 'application/json',
           'Api-Key': 'zaeemkey1',
@@ -44,10 +55,36 @@ const AlarmStatistics = () => {
     return totalAlarms.filter(item => item.alarmtext === alarmText).length;
   };
 
+  const colors = [
+    () => `#576EB2`,
+    () => `#63A6B9`,
+    () => `#F68121`,
+    () => `#81A9E2`,
+    () => `#F66969`,
+    () => `#FBE38A`,
+    () => `#BD6499`,
+    () => `#F2B6B6`,
+    () => `#D9D9D9`,
+    // Add more colors if needed
+  ];
   const dataForBarChart = uniqueAlarmTexts.map(alarmText => ({
     name: alarmText,
     count: getAlarmTextCount(alarmText),
   }));
+  dataForBarChart.sort((a, b) => b.count - a.count);
+  const topSixData = dataForBarChart.slice(0, 9);
+  console.log('Top six data points:', topSixData);
+
+  const chartData = {
+    labels: topSixData.map(item => item.name),
+    datasets: [
+      {
+        data: topSixData.map(item => item.count),
+        colors: colors.slice(0, topSixData.length), // Use colors only for the topSixData elements
+      },
+    ],
+  };
+
   const chartConfig = {
     backgroundGradientFrom: '#ffffff',
     backgroundGradientTo: '#ffffff',
@@ -55,44 +92,82 @@ const AlarmStatistics = () => {
     color: (opacity = 0.8) => `rgba(22, 128, 204,${opacity})`,
     strokeWidth: 2,
     barPercentage: 0.75,
+    formatXLabel: () => '',
+    // categoryPercentage: 1,
   };
 
   return (
-    <View>
-      {/* Bar Chart */}
-      <BarChart
-        data={{
-          labels: uniqueAlarmTexts,
-          datasets: [
-            {
-              data: dataForBarChart.map(item => item.count),
-              colors: [
-                (opacity = 1) => `#576EB2`,
-                (opacity = 1) => `#63A6B9`,
-                (opacity = 1) => `#81A9E2`,
-                (opacity = 1) => `#BD6499`,
-                (opacity = 1) => `#F2B6B6`,
-                (opacity = 1) => `#F66969`,
-                (opacity = 1) => `#FBE38A`,
-                (opacity = 1) => `#265599`,
-                (opacity = 1) => `#D9D9D9`,
-                (opacity = 1) => `#F68121`,
-                (opacity = 1) => `#576EB2`,
-                (opacity = 1) => `#78a9ff`,
-              ],
-            },
-          ],
-        }}
-        width={Dimensions.get('window').width}
-        height={220}
-        chartConfig={chartConfig}
-        yAxisLabel=""
-        withCustomBarColorFromData={true}
-        flatColor={true}
-        yAxisSuffix="" // Add the yAxisSuffix prop here
-      />
+    <View style={styles.maincontainer}>
+      <View>
+        <Text style={styles.alarmText}>Alarm Statistics</Text>
+      </View>
+      <View>
+        <BarChart
+          data={chartData}
+          width={Dimensions.get('window').width * 0.4}
+          height={220}
+          chartConfig={chartConfig}
+          yAxisLabel=""
+          withCustomBarColorFromData={true}
+          flatColor={true}
+          yAxisSuffix="" // Add the yAxisSuffix prop here
+          showValuesOnTopOfBars={true}
+        />
+      </View>
+      <View style={styles.circleContainer}>
+        {topSixData.map((item, index) => (
+          <View key={index} style={styles.circleWrapper}>
+            <View
+              style={[
+                styles.circle,
+                {backgroundColor: colors[index % colors.length]()},
+              ]}
+            />
+            <Text style={styles.alarmCircleText}>{item.name}</Text>
+          </View>
+        ))}
+      </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  maincontainer: {
+    backgroundColor: '#fff',
+  },
+  alarmText: {
+    fontSize: moderateScale(10),
+    fontWeight: '600',
+    color: '#000',
+    paddingHorizontal: moderateScale(8),
+    textAlign: 'center',
+    paddingVertical: moderateScale(4),
+  },
+  circleContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    // marginTop: moderateScale(5),
+  },
+  circleWrapper: {
+    flexDirection: 'row',
+    width: '30%',
+    alignItems: 'center',
+    margin: 8,
+  },
+  circle: {
+    width: 15,
+    height: 15,
+    borderRadius: 10,
+    marginRight: 3,
+  },
+  alarmCircleText: {
+    textAlign: 'center',
+    color: 'black',
+    fontSize: moderateScale(8),
+    // fontWeight: '600',
+    // marginTop: 8,
+  },
+});
 
 export default AlarmStatistics;

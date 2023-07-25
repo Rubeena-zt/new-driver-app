@@ -64,7 +64,7 @@ const TotalAlarms = () => {
     selectedDate.split('-')[1]
   }-${selectedDate.split('-')[0]}`;
 
-  const limitedFilteredData = filteredData?.slice(0, 10);
+  const limitedFilteredData = filteredData?.slice(0, 7);
 
   const handleOpenModal = () => {
     setModalVisible(true);
@@ -83,6 +83,7 @@ const TotalAlarms = () => {
   const handleDateSelect = date => {
     setSelectedDate(date.dateString);
     setShowCalendar(false);
+    setModalVisible(false);
   };
 
   const fetchData = useCallback(async () => {
@@ -321,10 +322,12 @@ const styles = StyleSheet.create({
   mainAlarm: {
     width: '100%',
     backgroundColor: '#fff',
-    paddingVertical: moderateScale(5),
+    paddingVertical: moderateScale(2),
     paddingHorizontal: moderateScale(8),
     fontWeight: 'bold',
     borderRadius: moderateScale(4),
+    position: 'relative',
+    zIndex: 100,
   },
   alarmHeading: {
     color: '#000',
@@ -450,9 +453,9 @@ const styles = StyleSheet.create({
     width: 60,
     height: 30,
     borderRadius: 5,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    // display: 'flex',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   applyText: {
     color: '#fff',
