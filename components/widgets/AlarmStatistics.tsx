@@ -104,17 +104,29 @@ const AlarmStatistics = () => {
         <Text style={styles.alarmText}>Alarm Statistics</Text>
       </View>
       <View>
-        <BarChart
-          data={chartData}
-          width={Dimensions.get('window').width * 0.4}
-          height={220}
-          chartConfig={chartConfig}
-          yAxisLabel=""
-          withCustomBarColorFromData={true}
-          flatColor={true}
-          yAxisSuffix="" // Add the yAxisSuffix prop here
-          showValuesOnTopOfBars={true}
-        />
+        {totalAlarms.length === 0 ? (
+          <View
+            style={styles.noAlarmsFound}>
+            <Text
+              style={{
+                fontSize: moderateScale(20),
+              }}>
+              No alarms found
+            </Text>
+          </View>
+        ) : (
+          <BarChart
+            data={chartData}
+            width={Dimensions.get('window').width * 0.4}
+            height={220}
+            chartConfig={chartConfig}
+            yAxisLabel=""
+            withCustomBarColorFromData={true}
+            flatColor={true}
+            yAxisSuffix="" // Add the yAxisSuffix prop here
+            showValuesOnTopOfBars={true}
+          />
+        )}
       </View>
       <View style={styles.circleContainer}>
         {topSixData.map((item, index) => (
@@ -170,6 +182,12 @@ const styles = StyleSheet.create({
     // fontWeight: '600',
     // marginTop: 8,
   },
+  noAlarmsFound:{
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '50%',
+  }
 });
 
 export default AlarmStatistics;

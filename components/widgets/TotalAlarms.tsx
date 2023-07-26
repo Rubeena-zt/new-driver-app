@@ -81,19 +81,10 @@ const TotalAlarms = () => {
     setFilteredData(totalAlarms);
   }, [totalAlarms]);
 
-  // // Assuming selectedDate is in the "2023-07-23" format
-  // const formattedSelectedDate = `${selectedDate.split('-')[2]}-${
-  //   selectedDate.split('-')[1]
-  // }-${selectedDate.split('-')[0]}`;
-  let formattedSelectedDate;
-  if (selectedDate === 'day') {
-    // Split the selectedDate into year, month, and day
-    const [year, month, day] = selectedDate.split('-');
-    formattedSelectedDate = `${day}-${month}-${year}`;
-  } else if (selectedDate === 'month') {
-    const [year, month] = selectedDate.split('-');
-    formattedSelectedDate = `${month}-${year}`;
-  }
+  // Assuming selectedDate is in the "2023-07-23" format
+  const formattedSelectedDate = `${selectedDate.split('-')[2]}-${
+    selectedDate.split('-')[1]
+  }-${selectedDate.split('-')[0]}`;
 
   const limitedFilteredData = filteredData?.slice(0, 7);
 
@@ -149,6 +140,7 @@ const TotalAlarms = () => {
   const fetchData = useCallback(async () => {
     try {
       // Define the API endpoint URL
+      // const apiUrl = `https://test.g-trackit.com:8090/apis/v1/drivers/alarms?employeeid=0006972129&starttime=2023-07-26&endtime=2023-07-26`;
       const apiUrl = `https://test.g-trackit.com:8090/apis/v1/vehicles/alarms?date=${selectedDate}`;
       const headers = {
         'Content-Type': 'application/json',
@@ -190,20 +182,35 @@ const TotalAlarms = () => {
             {formattedSelectedDate}
           </Text>
         </View>
+
+        {/* <View> */}
         <View style={styles.headerRow}>
           <Text style={styles.headerCell1}>Time</Text>
           <Text style={styles.headerCell}>Plate Number</Text>
           <Text style={styles.headerCell}>Alarm</Text>
         </View>
-        {limitedFilteredData?.map((rowData, index) => (
-          <View key={index} style={styles.row}>
-            <Text style={styles.cell1}>
-              {rowData?.createtime.split(' ')[1]}
+        {totalAlarms.length === 0 ? (
+          <View style={styles.noAlarmsFound}>
+            <Text
+              style={{
+                fontSize: moderateScale(20),
+              }}>
+              No alarms found
             </Text>
-            <Text style={styles.cell2}>{rowData?.plate}</Text>
-            <Text style={styles.cell3}>{rowData?.alarmtext}</Text>
           </View>
-        ))}
+        ) : (
+          <View>
+            {limitedFilteredData?.map((rowData, index) => (
+              <View key={index} style={styles.row}>
+                <Text style={styles.cell1}>
+                  {rowData?.createtime.split(' ')[1]}
+                </Text>
+                <Text style={styles.cell2}>{rowData?.plate}</Text>
+                <Text style={styles.cell3}>{rowData?.alarmtext}</Text>
+              </View>
+            ))}
+          </View>
+        )}
         <View style={styles.line} />
         <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
           <View>
@@ -445,6 +452,8 @@ const TotalAlarms = () => {
             </View>
           </View>
         </Modal>
+        {/* </View> */}
+        {/* )} */}
       </View>
     </>
   );
@@ -605,6 +614,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: moderateScale(30),
     marginTop: 6,
+  },
+  noAlarmsFound: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '50%',
   },
 });
 

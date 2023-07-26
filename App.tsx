@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   },
   firstPart: {
     width: '20%',
-    backgroundColor: '#1E82BD',
+    backgroundColor: '#fff',
     padding: moderateScale(10),
     margin: moderateScale(7),
   },
