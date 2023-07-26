@@ -43,12 +43,15 @@ const TotalAlarms = () => {
   ];
   const years = ['2023', '2024', '2025', '2026', '2027'];
   const dispatch = useDispatch();
-  const selectedDate = useSelector(state => state.date);
+  // const selectedDate = useSelector(state => state.date);
+  const selectedDate = useSelector(state => state.date.date);
+  console.log('selectedDate', selectedDate);
+
   const [totalAlarms, setTotalAlarms] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedValue, setSelectedValue] = useState('Day');
   // const [selectedDate, setSelectedDate] = useState(apiDate);
-  const [selectedMonth, setSelectedMonth] = useState(months[0]);
+  const [selectedMonth, setSelectedMonth] = useState('01');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedAlarmText, setSelectedAlarmText] = useState('');
@@ -78,10 +81,19 @@ const TotalAlarms = () => {
     setFilteredData(totalAlarms);
   }, [totalAlarms]);
 
-  // Assuming selectedDate is in the "2023-07-23" format
-  const formattedSelectedDate = `${selectedDate.split('-')[2]}-${
-    selectedDate.split('-')[1]
-  }-${selectedDate.split('-')[0]}`;
+  // // Assuming selectedDate is in the "2023-07-23" format
+  // const formattedSelectedDate = `${selectedDate.split('-')[2]}-${
+  //   selectedDate.split('-')[1]
+  // }-${selectedDate.split('-')[0]}`;
+  let formattedSelectedDate;
+  if (selectedDate === 'day') {
+    // Split the selectedDate into year, month, and day
+    const [year, month, day] = selectedDate.split('-');
+    formattedSelectedDate = `${day}-${month}-${year}`;
+  } else if (selectedDate === 'month') {
+    const [year, month] = selectedDate.split('-');
+    formattedSelectedDate = `${month}-${year}`;
+  }
 
   const limitedFilteredData = filteredData?.slice(0, 7);
 
@@ -96,9 +108,6 @@ const TotalAlarms = () => {
   };
 
   const handleDateSelect = date => {
-    // setSelectedDate(date.dateString);
-    // setShowCalendar(false);
-    // setModalVisible(false);
     dispatch(setDate(date.dateString));
   };
 
@@ -108,9 +117,34 @@ const TotalAlarms = () => {
     setModalVisible(false);
   };
 
-  const handleMonthApply = () => {
-    
+  // Function to handle month selection
+  const handleMonthSelect = month => {
+    // dispatch(setDate({month: selectedMonth}));
+    setSelectedMonth(month); // Assuming you are using React state hooks for selectedMonth
+    updateSelectedDate(month, selectedYear); // Call the function to update selectedDate
   };
+
+  const handleYearSelect = year => {
+    setSelectedYear(year); // Assuming you are using React state hooks for selectedYear
+    updateSelectedDate(selectedMonth, year); // Call the function to update selectedDate
+  };
+
+  const updateSelectedDate = (month, year) => {
+    const fullDate = `${year}-${month}`; // Assuming the day is set to the 1st day of the month
+    dispatch(setDate(fullDate));
+  };
+
+  const handleMonthApply = () => {
+    fetchData();
+    setShowCalendar(false);
+    setModalVisible(false);
+  };
+
+  // const handleMonthSelect = selectedMonth => {
+  //   // const formattedValue = `${selectedYear}-${selectedMonth}`;
+  //   // console.log("formattedValue",formattedValue);
+  //   dispatch(setDate({month: selectedMonth}));
+  // };
 
   const fetchData = useCallback(async () => {
     try {
@@ -303,13 +337,15 @@ const TotalAlarms = () => {
                     <View>
                       <Picker
                         selectedValue={selectedMonth}
-                        onValueChange={itemValue => setSelectedMonth(itemValue)}
+                        onValueChange={itemValue =>
+                          handleMonthSelect(itemValue)
+                        }
                         style={styles.pickerStyle}>
                         {months.map((month, index) => (
                           <Picker.Item
                             key={index}
                             label={month}
-                            value={month}
+                            value={(index + 1).toString().padStart(2, '0')}
                           />
                         ))}
                       </Picker>
@@ -332,7 +368,7 @@ const TotalAlarms = () => {
                     <View>
                       <Picker
                         selectedValue={selectedYear}
-                        onValueChange={itemValue => setSelectedYear(itemValue)}
+                        onValueChange={itemValue => handleYearSelect(itemValue)}
                         style={styles.pickerStyle}>
                         {years.map((year, index) => (
                           <Picker.Item key={index} label={year} value={year} />

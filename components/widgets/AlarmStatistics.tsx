@@ -5,7 +5,7 @@ import {moderateScale} from 'react-native-size-matters';
 import {useSelector} from 'react-redux';
 
 const AlarmStatistics = () => {
-  const selectedDate = useSelector((state) => state.date);
+  const selectedDate = useSelector(state => state.date.date);
   // const today = new Date();
   // console.log('today', today);
   // const day = String(today.getDate()).padStart(2, '0');
