@@ -140,8 +140,8 @@ const TotalAlarms = () => {
   const fetchData = useCallback(async () => {
     try {
       // Define the API endpoint URL
-      // const apiUrl = `https://test.g-trackit.com:8090/apis/v1/drivers/alarms?employeeid=0006972129&starttime=2023-07-26&endtime=2023-07-26`;
-      const apiUrl = `https://test.g-trackit.com:8090/apis/v1/vehicles/alarms?date=${selectedDate}`;
+      const apiUrl = `https://test.g-trackit.com:8090/apis/v1/drivers/alarms?employeeid=0006972129&starttime=2023-07-26&endtime=2023-07-26`;
+      // const apiUrl = `https://test.g-trackit.com:8090/apis/v1/vehicles/alarms?date=${selectedDate}`;
       const headers = {
         'Content-Type': 'application/json',
         'Api-Key': 'zaeemkey1',
@@ -305,6 +305,7 @@ const TotalAlarms = () => {
 
                 {showCalendar && selectedValue === 'Day' && (
                   <Calendar
+                    markingType={'period'}
                     onDayPress={date => {
                       handleDateSelect(date);
                       setShowCalendar(false);
