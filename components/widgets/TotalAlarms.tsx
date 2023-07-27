@@ -152,16 +152,20 @@ const TotalAlarms = () => {
   const updateSelectedDate = (month, year) => {
     const fullDate = `${year}-${month}`;
     // dispatch(set(fullDate));
-    const startDate = moment(fullDate).startOf('month').format('YYYY-MM-DD');
-    const endDate = moment(fullDate).endOf('month').format('YYYY-MM-DD');
-    dispatch(setStartDate(startDate));
-    dispatch(setEndDate(endDate));
+    const startDateMonth = moment(fullDate)
+      .startOf('month')
+      .format('YYYY-MM-DD');
+    console.log('startDateMonth', startDateMonth);
+
+    const endDateMonth = moment(fullDate).endOf('month').format('YYYY-MM-DD');
+    console.log('endDateMonth', endDateMonth);
+    dispatch(setStartDate(startDateMonth));
+    dispatch(setEndDate(endDateMonth));
     dispatch(setMonth(fullDate));
   };
 
   const handleMonthApply = () => {
     fetchData();
-    
     setShowCalendar(false);
     setModalVisible(false);
   };
