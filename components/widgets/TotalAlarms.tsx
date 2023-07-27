@@ -8,23 +8,13 @@ import {
   Pressable,
   TextInput,
 } from 'react-native';
+import moment from 'moment';
 import {moderateScale} from 'react-native-size-matters';
 import {Picker} from '@react-native-picker/picker';
 import {Calendar} from 'react-native-calendars';
 import {useDispatch, useSelector} from 'react-redux';
 import {FilterComponent, RefreshIcon} from '../../assets/SvgComponents';
-import {setDate} from '../../features/dateSlice';
-
-// const today = new Date();
-// console.log('today', today);
-// const day = String(today.getDate()).padStart(2, '0');
-// const month = String(today.getMonth() + 1).padStart(2, '0');
-// const year = today.getFullYear();
-// // const formattedDate = today.toISOString().split('T')[0];
-// const formattedDate = `${day}-${month}-${year}`;
-// console.log('formattedDate', formattedDate);
-// const apiDate = `${year}-${month}-${day}`;
-// console.log('apidate', apiDate);
+import {setStartDate, setEndDate, setMonth} from '../../features/dateSlice';
 
 const TotalAlarms = () => {
   const months = [
@@ -44,23 +34,27 @@ const TotalAlarms = () => {
   const years = ['2023', '2024', '2025', '2026', '2027'];
   const dispatch = useDispatch();
   // const selectedDate = useSelector(state => state.date);
-  const selectedDate = useSelector(state => state.date.date);
-  console.log('selectedDate', selectedDate);
+  // const selectedDate = useSelector(state => state.date.date);
+  const {startDate, endDate, month} = useSelector(state => state.date);
+  console.log('startDateredux', startDate);
+  console.log('endDateredux', endDate);
 
   const [totalAlarms, setTotalAlarms] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedValue, setSelectedValue] = useState('Day');
   // const [selectedDate, setSelectedDate] = useState(apiDate);
+  const [markedDates, setMarkedDates] = useState({});
   const [selectedMonth, setSelectedMonth] = useState('01');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedAlarmText, setSelectedAlarmText] = useState('');
   const [filteredData, setFilteredData] = useState([]);
+  const [selectedStartDate, setSelectedStartDate] = useState(null);
+  const [selectedEndDate, setSelectedEndDate] = useState(null);
 
   const uniqueAlarmTexts = [
     ...new Set(totalAlarms.map(item => item.alarmtext)),
   ];
-  // console.log('uniqueAlarmTexts', uniqueAlarmTexts);
   const handleAlarmTextChange = itemValue => {
     setSelectedAlarmText(itemValue);
   };
@@ -82,9 +76,9 @@ const TotalAlarms = () => {
   }, [totalAlarms]);
 
   // Assuming selectedDate is in the "2023-07-23" format
-  const formattedSelectedDate = `${selectedDate.split('-')[2]}-${
-    selectedDate.split('-')[1]
-  }-${selectedDate.split('-')[0]}`;
+  // const formattedSelectedDate = `${selectedDate.split('-')[2]}-${
+  //   selectedDate.split('-')[1]
+  // }-${selectedDate.split('-')[0]}`;
 
   const limitedFilteredData = filteredData?.slice(0, 7);
 
@@ -99,10 +93,46 @@ const TotalAlarms = () => {
   };
 
   const handleDateSelect = date => {
-    dispatch(setDate(date.dateString));
+    console.log('date', date);
+    console.log('selectedStartDate', selectedStartDate);
+    console.log('selectedEndDate', selectedEndDate);
+
+    if (!selectedStartDate || (selectedStartDate && selectedEndDate)) {
+      setSelectedStartDate(date.dateString);
+      setSelectedEndDate(null); // Reset the selectedEndDate when a new selectedStartDate is selected
+    } else {
+      setSelectedEndDate(date.dateString);
+    }
   };
 
+  const assignMarkedDates = () => {
+    let markedDates = {};
+    if (selectedStartDate && selectedEndDate) {
+      // If both selectedStartDate and selectedEndDate are selected, mark dates in between
+      const startDateObj = new Date(selectedStartDate);
+      const endDateObj = new Date(selectedEndDate);
+      const currentDate = new Date(startDateObj);
+
+      while (currentDate <= endDateObj) {
+        const dateString = currentDate.toISOString().split('T')[0];
+        markedDates[dateString] = {selected: true, selectedColor: 'blue'};
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    } else if (selectedStartDate) {
+      // If only selectedStartDate is selected, mark the selected selectedStartDate
+      markedDates[selectedStartDate] = {selected: true, selectedColor: 'blue'};
+    }
+
+    setMarkedDates(markedDates);
+  };
+
+  useEffect(() => {
+    assignMarkedDates();
+  }, [selectedStartDate, selectedEndDate]);
+
   const handleDateApply = () => {
+    dispatch(setStartDate(selectedStartDate));
+    dispatch(setEndDate(selectedEndDate));
     fetchData();
     setShowCalendar(false);
     setModalVisible(false);
@@ -110,23 +140,28 @@ const TotalAlarms = () => {
 
   // Function to handle month selection
   const handleMonthSelect = month => {
-    // dispatch(setDate({month: selectedMonth}));
-    setSelectedMonth(month); // Assuming you are using React state hooks for selectedMonth
-    updateSelectedDate(month, selectedYear); // Call the function to update selectedDate
+    setSelectedMonth(month);
+    updateSelectedDate(month, selectedYear);
   };
 
   const handleYearSelect = year => {
-    setSelectedYear(year); // Assuming you are using React state hooks for selectedYear
-    updateSelectedDate(selectedMonth, year); // Call the function to update selectedDate
+    setSelectedYear(year);
+    updateSelectedDate(selectedMonth, year);
   };
 
   const updateSelectedDate = (month, year) => {
-    const fullDate = `${year}-${month}`; // Assuming the day is set to the 1st day of the month
-    dispatch(setDate(fullDate));
+    const fullDate = `${year}-${month}`;
+    // dispatch(set(fullDate));
+    const startDate = moment(fullDate).startOf('month').format('YYYY-MM-DD');
+    const endDate = moment(fullDate).endOf('month').format('YYYY-MM-DD');
+    dispatch(setStartDate(startDate));
+    dispatch(setEndDate(endDate));
+    dispatch(setMonth(fullDate));
   };
 
   const handleMonthApply = () => {
     fetchData();
+    
     setShowCalendar(false);
     setModalVisible(false);
   };
@@ -140,8 +175,14 @@ const TotalAlarms = () => {
   const fetchData = useCallback(async () => {
     try {
       // Define the API endpoint URL
-      const apiUrl = `https://test.g-trackit.com:8090/apis/v1/drivers/alarms?employeeid=0006972129&starttime=2023-07-26&endtime=2023-07-26`;
+      let apiUrl = `https://test.g-trackit.com:8090/apis/v1/drivers/alarms?employeeid=0006972129&starttime=${startDate}`;
       // const apiUrl = `https://test.g-trackit.com:8090/apis/v1/vehicles/alarms?date=${selectedDate}`;
+      if (endDate) {
+        apiUrl += `&endtime=${endDate}`;
+      } else {
+        // If endDate is not available, set it to be equal to startDate
+        apiUrl += `&endtime=${startDate}`;
+      }
       const headers = {
         'Content-Type': 'application/json',
         'Api-Key': 'zaeemkey1',
@@ -162,7 +203,7 @@ const TotalAlarms = () => {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  }, [selectedDate]);
+  }, [startDate, endDate]);
 
   useEffect(() => {
     fetchData();
@@ -178,9 +219,9 @@ const TotalAlarms = () => {
               <Text style={styles.createTime}>{totalAlarms?.length}</Text>
             </Text>
           </Pressable>
-          <Text style={{marginTop: moderateScale(15)}}>
+          {/* <Text style={{marginTop: moderateScale(15)}}>
             {formattedSelectedDate}
-          </Text>
+          </Text> */}
         </View>
 
         {/* <View> */}
@@ -277,48 +318,41 @@ const TotalAlarms = () => {
                   </View>
                 </View>
               </View>
+              {selectedValue === 'day' && (
+                <View style={styles.intervalBox}>
+                  <Text
+                    style={{
+                      marginRight: moderateScale(5),
+                      fontSize: moderateScale(10),
+                      marginTop: moderateScale(5),
+                    }}>
+                    Date
+                  </Text>
 
-              <View style={styles.intervalBox}>
-                <Text
-                  style={{
-                    marginRight: moderateScale(5),
-                    fontSize: moderateScale(10),
-                    marginTop: moderateScale(5),
-                  }}>
-                  Date
-                </Text>
-
-                {!showCalendar && (
-                  <TextInput
-                    style={styles.inputCalendar}
-                    placeholder="Select Date"
-                    value={selectedDate}
-                    editable={false}
-                  />
-                )}
-
-                <TouchableOpacity
-                  style={styles.dateIcon}
-                  onPress={() => setShowCalendar(true)}>
-                  <Text style={styles.iconText}>📅</Text>
-                </TouchableOpacity>
-
-                {showCalendar && selectedValue === 'Day' && (
-                  <Calendar
-                    markingType={'period'}
-                    onDayPress={date => {
-                      handleDateSelect(date);
-                      setShowCalendar(false);
-                    }}
-                    markedDates={{
-                      [selectedDate]: {
-                        selected: true,
-                        selectedColor: 'blue',
-                      },
-                    }}
-                  />
-                )}
-              </View>
+                  {!showCalendar && (
+                    <TextInput
+                      style={styles.inputCalendar}
+                      placeholder="Select Date"
+                      value={startDate}
+                      editable={false}
+                    />
+                  )}
+                  <TouchableOpacity
+                    style={styles.dateIcon}
+                    onPress={() => setShowCalendar(true)}>
+                    <Text style={styles.iconText}>📅</Text>
+                  </TouchableOpacity>
+                  {showCalendar && selectedValue === 'Day' && (
+                    <Calendar
+                      markingType={'dot'}
+                      onDayPress={date => {
+                        handleDateSelect(date);
+                      }}
+                      markedDates={markedDates}
+                    />
+                  )}
+                </View>
+              )}
               {showCalendar && selectedValue === 'Day' && (
                 <TouchableOpacity
                   style={styles.ApplyButton}

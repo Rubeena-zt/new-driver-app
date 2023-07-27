@@ -44,10 +44,10 @@ function DriverProfile() {
       </View>
       <View style={styles.profileContainer}>
         <Image
-          // source={require('../../assets/images/profilePic.png')}
-          source={driverDetails.img}
+          source={require('../../assets/images/profilePic.png')}
+          // source={driverDetails.img}
           style={styles.profilePic}
-          // resizeMode="contain"
+          resizeMode="contain"
         />
       </View>
       <View style={styles.detailsContainer}>
