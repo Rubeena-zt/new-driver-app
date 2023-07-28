@@ -133,7 +133,7 @@ const TotalAlarms = () => {
   const handleDateApply = () => {
     dispatch(setStartDate(selectedStartDate));
     dispatch(setEndDate(selectedEndDate));
-    fetchData();
+    fetchData(selectedStartDate, selectedEndDate);
     setShowCalendar(false);
     setModalVisible(false);
   };
@@ -165,7 +165,7 @@ const TotalAlarms = () => {
   };
 
   const handleMonthApply = () => {
-    fetchData();
+    fetchData(startDate, endDate);
     setShowCalendar(false);
     setModalVisible(false);
   };
@@ -176,7 +176,7 @@ const TotalAlarms = () => {
   //   dispatch(setDate({month: selectedMonth}));
   // };
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (startDate, endDate) => {
     try {
       // Define the API endpoint URL
       let apiUrl = `https://test.g-trackit.com:8090/apis/v1/drivers/alarms?employeeid=0006972129&starttime=${startDate}`;
@@ -207,11 +207,11 @@ const TotalAlarms = () => {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  }, [startDate, endDate]);
+  }, []);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchData(startDate, endDate);
+  }, []);
 
   return (
     <>
@@ -322,41 +322,41 @@ const TotalAlarms = () => {
                   </View>
                 </View>
               </View>
-              {selectedValue === 'day' && (
-                <View style={styles.intervalBox}>
-                  <Text
-                    style={{
-                      marginRight: moderateScale(5),
-                      fontSize: moderateScale(10),
-                      marginTop: moderateScale(5),
-                    }}>
-                    Date
-                  </Text>
+              {/* {selectedValue === 'day' && ( */}
+              <View style={styles.intervalBox}>
+                <Text
+                  style={{
+                    marginRight: moderateScale(5),
+                    fontSize: moderateScale(10),
+                    marginTop: moderateScale(5),
+                  }}>
+                  Date
+                </Text>
 
-                  {!showCalendar && (
-                    <TextInput
-                      style={styles.inputCalendar}
-                      placeholder="Select Date"
-                      value={startDate}
-                      editable={false}
-                    />
-                  )}
-                  <TouchableOpacity
-                    style={styles.dateIcon}
-                    onPress={() => setShowCalendar(true)}>
-                    <Text style={styles.iconText}>📅</Text>
-                  </TouchableOpacity>
-                  {showCalendar && selectedValue === 'Day' && (
-                    <Calendar
-                      markingType={'dot'}
-                      onDayPress={date => {
-                        handleDateSelect(date);
-                      }}
-                      markedDates={markedDates}
-                    />
-                  )}
-                </View>
-              )}
+                {/* {!showCalendar && ( */}
+                <TextInput
+                  style={styles.inputCalendar}
+                  placeholder="Select Date"
+                  value={startDate}
+                  editable={false}
+                />
+                {/* )} */}
+                <TouchableOpacity
+                  style={styles.dateIcon}
+                  onPress={() => setShowCalendar(true)}>
+                  <Text style={styles.iconText}>📅</Text>
+                </TouchableOpacity>
+                {showCalendar && (
+                  <Calendar
+                    markingType={'dot'}
+                    onDayPress={date => {
+                      handleDateSelect(date);
+                    }}
+                    markedDates={markedDates}
+                  />
+                )}
+              </View>
+              {/* )} */}
               {showCalendar && selectedValue === 'Day' && (
                 <TouchableOpacity
                   style={styles.ApplyButton}
