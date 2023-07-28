@@ -106,8 +106,8 @@ const AlarmStatistics = () => {
         ) : (
           <BarChart
             data={chartData}
-            width={Dimensions.get('window').width * 0.4}
-            height={220}
+            width={Dimensions.get('window').width * 0.3}
+            height={320}
             chartConfig={chartConfig}
             yAxisLabel=""
             withCustomBarColorFromData={true}

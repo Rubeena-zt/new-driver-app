@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View} from 'react-native';
 import {Provider} from 'react-redux';
 import TotalAlarms from './components/widgets/TotalAlarms';
 import AlarmStatistics from './components/widgets/AlarmStatistics';
@@ -7,30 +7,42 @@ import {moderateScale} from 'react-native-size-matters';
 import DriverProfile from './components/widgets/DriverProfile';
 import store from './features/store';
 import Appss from './components/widgets/Testingzzz';
+import MiddleComponent from './components/MiddleComponent';
+import Header from './components/Header';
+import Reminders from './components/widgets/Reminders';
 
 function App(): JSX.Element {
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.firstPart}>
-        {/* <Text>1st part</Text> */}
-        <DriverProfile />
-      </View>
-      <Provider store={store}>
-        <View style={styles.secondPart}>
-          {/* <Text>2nd part</Text> */}
-          <View style={{flex: 1, marginTop: moderateScale(5)}}>
-            <View style={{height: '50%', marginBottom: moderateScale(15)}}>
-              <TotalAlarms />
-            </View>
-            <View style={{height: '50%'}}>
-              <AlarmStatistics />
-            </View>
-          </View>
+      {/* <View style={styles.header}>
+        <View>
+          <Text style={{fontSize: 40}}>gtrackit</Text>
         </View>
-      </Provider>
-      <View style={styles.thirdPart}>
-        <Text>3rd part</Text> 
-        <Appss />
+        <View>
+          <Text>headermiddle</Text>
+        </View>
+        <View>
+          <DriverProfile />
+        </View>
+      </View> */}
+
+      <Header />
+
+      <View style={styles.middlePart}>
+        <MiddleComponent />
+      </View>
+      <View style={styles.lowerPart}>
+        <Provider store={store}>
+          <View style={styles.alarmStatistics}>
+            <AlarmStatistics />
+          </View>
+          <View style={styles.totalAlarms}>
+            <TotalAlarms />
+          </View>
+        </Provider>
+        <View style={styles.reminders}>
+          <Reminders />
+        </View>
       </View>
     </View>
   );
@@ -39,26 +51,46 @@ function App(): JSX.Element {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    flexDirection: 'row',
-    backgroundColor: '#ECF9FF',
+    backgroundColor: '#EBECEF',
+    padding: moderateScale(9),
   },
-  firstPart: {
-    width: '20%',
-    backgroundColor: '#fff',
-    padding: moderateScale(10),
-    margin: moderateScale(7),
-  },
-  secondPart: {
-    width: '40%',
-    height: '100%',
+  header: {
     display: 'flex',
-    flexDirection: 'column',
+    flexDirection: 'row',
     justifyContent: 'space-between',
-    flex: 1,
-    // marginLeft:moderateScale(8)
+    width: '100%',
+    height: '10%',
+    backgroundColor: '#fff',
+    marginBottom: moderateScale(8),
   },
-  thirdPart: {
+  middlePart: {
+    width: '100%',
+    height: '25%',
+    marginBottom: moderateScale(8),
+    backgroundColor: '#fff',
+  },
+  lowerPart: {
+    display: 'flex',
+    flexDirection: 'row',
+    // justifyContent:'space-around',
+    gap: moderateScale(15),
+    width: '100%',
+    height: '65%',
+    marginBottom: moderateScale(8),
+    // backgroundColor: '#fff',
+  },
+  alarmStatistics: {
+    width: '35%',
+    // marginHorizontal: moderateScale(15),
+    gap: moderateScale(5),
+  },
+  totalAlarms: {
+    width: '35%',
+    marginHorizontal: moderateScale(5),
+  },
+  reminders: {
     width: '30%',
+    // backgroundColor: '#green',
   },
 });
 

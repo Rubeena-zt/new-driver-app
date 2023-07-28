@@ -35,38 +35,19 @@ function DriverProfile() {
 
   return (
     <View>
-      <View style={styles.logo}>
-        <Image
-          source={require('../../assets/images/logo.png')}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      </View>
       <View style={styles.profileContainer}>
-        <Image
-          source={require('../../assets/images/profilePic.png')}
-          // source={driverDetails.img}
-          style={styles.profilePic}
-          resizeMode="contain"
-        />
-      </View>
-      <View style={styles.detailsContainer}>
-        <Text style={styles.detailsName}>{driverDetails.name}</Text>
-        <Text style={styles.details}>Id: {driverDetails.employeeid}</Text>
-        <Text style={styles.details}>{driverDetails.company}</Text>
-        <Text style={styles.details}>
-          Period: {driverDetails.permitExpiration}
-        </Text>
-      </View>
-
-      <View
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          marginLeft: moderateScale(5),
-        }}>
-        <Text style={styles.details}>RAG score</Text>
-        <View style={styles.ragStyle} />
+        <View style={styles.imageContainer}>
+          <Image
+            source={require('../../assets/images/profilePic.png')}
+            // source={driverDetails.img}
+            style={styles.profilePic}
+            resizeMode="contain"
+          />
+        </View>
+        <View>
+          <Text style={styles.profileName}>{driverDetails.name}</Text>
+          <Text style={styles.employeeid}>{driverDetails.employeeid}</Text>
+        </View>
       </View>
     </View>
   );
@@ -76,39 +57,27 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
   },
-  logo: {
-    backgroundColor: '#fff',
-    // alignItems:'flex-start'
-  },
+
   profilePic: {
-    width: moderateScale(50),
-    height: moderateScale(50),
-    marginTop: moderateScale(5),
+    width: moderateScale(30),
+    height: moderateScale(30),
   },
   profileContainer: {
-    marginLeft: moderateScale(5),
-  },
-  detailsName: {
-    fontSize: moderateScale(12),
-    // color: '#fff',
-  },
-  details: {
-    // color: '#fff',
-    marginRight: 4,
-    fontSize: moderateScale(9),
-  },
-  detailsContainer: {
-    marginTop: moderateScale(5),
-    marginLeft: moderateScale(5),
-  },
-  ragStyle: {
-    width: 15,
-    height: 15,
-    backgroundColor: 'orange',
-  },
-  rag: {
     display: 'flex',
-    marginLeft: moderateScale(5),
+    flexDirection: 'row',
+    margin: moderateScale(8),
+    alignItems: 'center',
+  },
+  imageContainer: {
+    marginRight: moderateScale(5),
+  },
+  profileName: {
+    fontSize: moderateScale(13),
+    color: '#000',
+    fontWeight: '600',
+  },
+  employeeid: {
+    fontSize: moderateScale(12),
   },
 });
 export default DriverProfile;
