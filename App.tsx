@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     // justifyContent:'space-around',
-    gap: moderateScale(15),
+    gap: moderateScale(10),
     width: '100%',
     height: '65%',
     marginBottom: moderateScale(8),

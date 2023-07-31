@@ -191,13 +191,13 @@ const TotalAlarms = () => {
         'Content-Type': 'application/json',
         'Api-Key': 'zaeemkey1',
         Authorization:
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImFjY2Vzc0NvZGVzIjpbIjEiLCIyIiwiMyJdLCJpZCI6MSwicm9sZSI6IjAiLCJtb2JpbGUiOiIxMDAwMiIsImVtYWlsIjoiIiwicm9sZVZhbCI6Im51bGwiLCJpc09wZXJhdG9yIjowLCJpc3MiOiJaYWVlbSIsImlhdCI6MTY4ODA5Njg4NCwiZXhwIjoxNjkwNjg4ODg0fQ.cbyybtJ1ZJLc906Jc2Fk0O1hGZvRUNUKchRz_X2aL_c',
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImFjY2Vzc0NvZGVzIjpbIjEiLCIyIiwiMyJdLCJpZCI6MSwicm9sZSI6IjAiLCJtb2JpbGUiOiIxMDAwMiIsImVtYWlsIjoiIiwicm9sZVZhbCI6Im51bGwiLCJpc09wZXJhdG9yIjowLCJpc3MiOiJaYWVlbSIsImlhdCI6MTY5MDY5ODg4MCwiZXhwIjoxNjkzMjkwODgwfQ.TGJiKKxgaBzfOt12uE8gt_47X_1MHUGyDv4PUBEST7w',
       };
       const response = await fetch(apiUrl, {
         headers: headers,
       });
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error('Network response was not ok-totalalarms');
       }
       const data = await response.json();
       console.log('alarmdata', data);
