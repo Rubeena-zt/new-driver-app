@@ -52,44 +52,44 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: '#EBECEF',
-    padding: moderateScale(9),
   },
   header: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    height: '10%',
+    height: '8%',
     backgroundColor: '#fff',
     marginBottom: moderateScale(8),
   },
   middlePart: {
     width: '100%',
-    height: '25%',
+    height: '24%',
     marginBottom: moderateScale(8),
     backgroundColor: '#fff',
   },
   lowerPart: {
     display: 'flex',
     flexDirection: 'row',
-    // justifyContent:'space-around',
-    gap: moderateScale(10),
+    justifyContent: 'space-between',
+    // gap: moderateScale(10),
     width: '100%',
-    height: '65%',
-    marginBottom: moderateScale(8),
-    // backgroundColor: '#fff',
+    height: '64%',
+    padding: '2%',
+    // marginBottom:moderateScale(10)
+
+    // backgroundColor: '#000',
   },
   alarmStatistics: {
-    width: '35%',
+    width: '34%',
     // marginHorizontal: moderateScale(15),
-    gap: moderateScale(5),
   },
   totalAlarms: {
-    width: '35%',
-    marginHorizontal: moderateScale(5),
+    width: '34%',
+    // marginHorizontal: moderateScale(5),
   },
   reminders: {
-    width: '30%',
+    width: '29%',
     // backgroundColor: '#green',
   },
 });

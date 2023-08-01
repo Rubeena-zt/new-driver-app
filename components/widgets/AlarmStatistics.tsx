@@ -137,6 +137,7 @@ const AlarmStatistics = () => {
 const styles = StyleSheet.create({
   maincontainer: {
     backgroundColor: '#fff',
+    height:'100%',
   },
   alarmText: {
     fontSize: moderateScale(10),
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '50%',
+    height: '90%',
   },
 });
 

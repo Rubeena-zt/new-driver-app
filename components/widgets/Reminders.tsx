@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 
 function Reminders() {
@@ -36,8 +36,10 @@ function Reminders() {
         console.log('reminderDetails', data);
         console.log(
           'insuranceendtime',
-          remDetails?.overDue[0]?.data?.insuranceendtime,
+          remDetails?.overDue?.data?.insuranceendtime,
         );
+        console.log('type', data?.overDue[0]?.type);
+
         setRemDetails(data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -55,39 +57,45 @@ function Reminders() {
     }
   };
 
-  function getInsuranceMsg(remDetails) {
-    if (remDetails === 'overDue') {
-      return ` expired on ${formatDateDDmmmYYY(remDetails?.insuranceendtime)}`;
+  function getOverdueMsg(type, insuranceendtime, param, operate) {
+    if (type === 'Maintenance') {
+      switch (operate) {
+        case '2':
+          return ` is overdue since ${formatDateDDmmmYYY(param)}`;
+        case '3':
+          return ` was due at ${param}Kms`;
+        case '4':
+          // maintenance = 'Periodic maintenance';
+          return ` (${param}Kms) is overdue`;
+        default:
+          break;
+      }
+    } else if (type === 'Insurance') {
+      return ` expired on ${formatDateDDmmmYYY(insuranceendtime)}`;
     }
-    return ` will expire on ${formatDateDDmmmYYY(
-      remDetails?.overDue?.data?.insuranceendtime,
-    )}`;
   }
 
-  // function getMaintenanceMsg(remDetails) {
-  //   switch (remDetails?.data.operate) {
-  //     case '2':
-  //       if (remDetails?.data.type === 'overDue') {
-  //         return ` is overdue since ${formatDateDDmmmYYY(
-  //           remDetails?.data?.param,
-  //         )}`;
-  //       }
-  //       return ` is due on ${formatDateDDmmmYYY(remDetails?.data?.param)}`;
-  //     case '3':
-  //       if (category === 'overDue') {
-  //         return ` was due at ${remDetails?.data?.param}Kms`;
-  //       }
-  //       return ` is due at ${remDetails?.data?.param}Kms`;
-  //     case '4':
-  //       maintenanceType = 'Periodic maintenance';
-  //       if (category === 'overDue') {
-  //         return ` (${remDetails?.data?.param}Kms) is overdue`;
-  //       }
-  //       return ` (${remDetails?.data?.param}Kms)`;
-  //     default:
-  //       break;
-  //   }
-  // }
+  let maintenanceType = 'Maintenance';
+
+  function getUpcomingMsg(type, insuranceendtime, param, operate) {
+    if (type === 'Maintenance') {
+      switch (operate) {
+        case '2':
+          return ` is due on ${formatDateDDmmmYYY(param)}`;
+        case '3':
+          return ` is due at ${param}Kms`;
+        case '4':
+          maintenanceType = 'Periodic maintenance';
+          return ` (${param}Kms)`;
+        default:
+          break;
+      }
+    } else if (type === 'Insurance') {
+      return ` will expire on ${formatDateDDmmmYYY(
+        remDetails?.data?.insuranceendtime,
+      )}`;
+    }
+  }
 
   return (
     <View style={styles.mainContainer}>
@@ -96,19 +104,57 @@ function Reminders() {
         <Text style={styles.overDuelength}>{remDetails?.overDue?.length}</Text>
         <Text style={styles.overDue}>Overdue</Text>
       </View>
-      <View style={styles.overdueContainer}>
-        {remDetails?.overDue?.map((item, index) => (
-          <View key={index} style={styles.overduestyle}>
-            <Text style={styles.plate}>{item.plate}</Text>
-            <Text>
-              <Text style={(styles.remType, getColorByType(item.type))}>
-                {item.type}
+      <ScrollView>
+        <View style={styles.overdueContainer}>
+          {remDetails?.overDue?.map((item, index) => (
+            <View key={index}>
+              <Text style={styles.plate}>{item.plate}</Text>
+              <Text>
+                <Text style={(styles.remType, getColorByType(item.type))}>
+                  {item.type}
+                </Text>
+                <Text>
+                  {getOverdueMsg(
+                    item.type,
+                    item.data.insuranceendtime,
+                    item.data.param,
+                    item.data.operate,
+                  )}
+                </Text>
               </Text>
-              <Text>{getInsuranceMsg(remDetails)}</Text>
-            </Text>
-          </View>
-        ))}
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+
+      <View style={styles.upComingHeading}>
+        <Text style={styles.upCominglength}>
+          {remDetails?.upComing?.length}
+        </Text>
+        <Text style={styles.upComing}>Upcoming</Text>
       </View>
+      <ScrollView>
+        <View style={styles.upComingContainer}>
+          {remDetails?.upComing?.map((item, index) => (
+            <View key={index}>
+              <Text style={styles.plate}>{item.plate}</Text>
+              <Text>
+                <Text style={(styles.remType, getColorByType(item.type))}>
+                  {item.type}
+                </Text>
+                <Text>
+                  {getUpcomingMsg(
+                    item.type,
+                    item.data.insuranceendtime,
+                    item.data.param,
+                    item.data.operate,
+                  )}
+                </Text>
+              </Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
     </View>
   );
 }
@@ -116,15 +162,16 @@ function Reminders() {
 const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: '#fff',
-    height: '90%',
-    width: '85%',
-    // paddingRight: moderateScale(9),
+    height: '100%',
+    padding: moderateScale(6),
+    marginBottom: moderateScale(15),
+    overflow: 'hidden',
   },
   header: {
     fontSize: moderateScale(10),
     fontWeight: '600',
     color: '#000',
-    paddingHorizontal: moderateScale(8),
+    paddingHorizontal: moderateScale(5),
     textAlign: 'center',
     paddingVertical: moderateScale(4),
   },
@@ -133,7 +180,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: moderateScale(3),
-    color: 'green',
+    // color: 'green',
   },
   overDuelength: {
     fontSize: moderateScale(22),
@@ -146,11 +193,29 @@ const styles = StyleSheet.create({
   overdueContainer: {
     flexDirection: 'column',
   },
+  upComingHeading: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: moderateScale(3),
+    color: 'green',
+  },
+  upCominglength: {
+    fontSize: moderateScale(22),
+    color: '#32CB67',
+  },
+  upComing: {
+    color: '#32CB67',
+    fontSize: moderateScale(12),
+  },
+  upComingContainer: {
+    flexDirection: 'column',
+  },
   plate: {
     fontSize: moderateScale(10),
   },
   remType: {
-    fontSize: moderateScale(10),
+    fontSize: moderateScale(12),
   },
   maintenance: {
     color: '#ffc400',

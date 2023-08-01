@@ -501,6 +501,7 @@ const TotalAlarms = () => {
 const styles = StyleSheet.create({
   mainAlarm: {
     width: '100%',
+    height:'100%',
     backgroundColor: '#fff',
     paddingVertical: moderateScale(2),
     paddingHorizontal: moderateScale(8),
