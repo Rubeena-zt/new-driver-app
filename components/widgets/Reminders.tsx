@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 
 function Reminders() {
@@ -33,11 +40,11 @@ function Reminders() {
         }
         const data = await response.json();
         // console.log('alarmdata', data);
-        console.log('reminderDetails', data);
-        console.log(
-          'insuranceendtime',
-          remDetails?.overDue?.data?.insuranceendtime,
-        );
+        // console.log('reminderDetails', data);
+        // console.log(
+        //   'insuranceendtime',
+        //   remDetails?.overDue?.data?.insuranceendtime,
+        // );
         console.log('type', data?.overDue[0]?.type);
 
         setRemDetails(data);
@@ -97,6 +104,15 @@ function Reminders() {
     }
   }
 
+  const handleOpenModal = () => {
+    setShowModal(true);
+    console.log('modal button pressed');
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.header}>Reminders</Text>
@@ -109,19 +125,32 @@ function Reminders() {
           {remDetails?.overDue?.map((item, index) => (
             <View key={index}>
               <Text style={styles.plate}>{item.plate}</Text>
-              <Text>
-                <Text style={(styles.remType, getColorByType(item.type))}>
-                  {item.type}
-                </Text>
+              <View style={styles.textDetails}>
                 <Text>
-                  {getOverdueMsg(
-                    item.type,
-                    item.data.insuranceendtime,
-                    item.data.param,
-                    item.data.operate,
-                  )}
+                  <Text style={(styles.remType, getColorByType(item.type))}>
+                    {item.type}
+                  </Text>
+                  <Text>
+                    {getOverdueMsg(
+                      item.type,
+                      item.data.insuranceendtime,
+                      item.data.param,
+                      item.data.operate,
+                    )}
+                  </Text>
                 </Text>
-              </Text>
+                <View>
+                  <TouchableOpacity onPress={handleOpenModal}>
+                    <Text style={styles.details}>Details</Text>
+                  </TouchableOpacity>
+                  <Modal
+                    visible={showModal}
+                    transparent
+                    animationType="slide">
+                      <View></View>
+                    </Modal>
+                </View>
+              </View>
             </View>
           ))}
         </View>
@@ -138,19 +167,42 @@ function Reminders() {
           {remDetails?.upComing?.map((item, index) => (
             <View key={index}>
               <Text style={styles.plate}>{item.plate}</Text>
-              <Text>
-                <Text style={(styles.remType, getColorByType(item.type))}>
-                  {item.type}
-                </Text>
+              <View style={styles.textDetails}>
                 <Text>
-                  {getUpcomingMsg(
-                    item.type,
-                    item.data.insuranceendtime,
-                    item.data.param,
-                    item.data.operate,
-                  )}
+                  <Text style={(styles.remType, getColorByType(item.type))}>
+                    {item.type}
+                  </Text>
+                  <Text>
+                    {getUpcomingMsg(
+                      item.type,
+                      item.data.insuranceendtime,
+                      item.data.param,
+                      item.data.operate,
+                    )}
+                  </Text>
                 </Text>
-              </Text>
+                <View>
+                  {/* <TouchableOpacity
+                    onPress={handleOpenModal}
+                    activeOpacity={0.5}> */}
+                  <Text style={styles.details}>Details</Text>
+                  {/* </TouchableOpacity> */}
+                  {/* <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                      <Modal
+                        animationType="slide"
+                        visible={showModal}
+                        transparent={true}
+                        onRequestClose={() => {
+                          console.log('Modal has been closed.');
+                          setShowModal(!showModal);
+                        }}>
+                        <Text>hiii</Text>
+                      </Modal>
+                    </View>
+                  </View> */}
+                </View>
+              </View>
             </View>
           ))}
         </View>
@@ -222,6 +274,32 @@ const styles = StyleSheet.create({
   },
   insurance: {
     color: 'rgb(4, 106, 223)',
+  },
+  details: {
+    color: '#144072',
+    textDecorationLine: 'underline',
+  },
+  textDetails: {
+    // width:
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    width: '30%',
+    height: '50%',
+    backgroundColor: '#green',
+    borderRadius: 5,
+    zIndex: 100,
+    alignItems: 'flex-start',
+    padding: moderateScale(15),
+    // shadowColor: '#000',
   },
 });
 
