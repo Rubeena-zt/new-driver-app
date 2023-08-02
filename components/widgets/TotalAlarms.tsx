@@ -76,9 +76,9 @@ const TotalAlarms = () => {
   }, [totalAlarms]);
 
   // Assuming selectedDate is in the "2023-07-23" format
-  // const formattedSelectedDate = `${selectedDate.split('-')[2]}-${
-  //   selectedDate.split('-')[1]
-  // }-${selectedDate.split('-')[0]}`;
+  const formattedSelectedDate = `${startDate.split('-')[2]}-${
+    startDate.split('-')[1]
+  }-${startDate.split('-')[0]}`;
 
   const limitedFilteredData = filteredData?.slice(0, 7);
 
@@ -170,12 +170,6 @@ const TotalAlarms = () => {
     setModalVisible(false);
   };
 
-  // const handleMonthSelect = selectedMonth => {
-  //   // const formattedValue = `${selectedYear}-${selectedMonth}`;
-  //   // console.log("formattedValue",formattedValue);
-  //   dispatch(setDate({month: selectedMonth}));
-  // };
-
   const fetchData = useCallback(async (startDate, endDate) => {
     try {
       // Define the API endpoint URL
@@ -223,9 +217,9 @@ const TotalAlarms = () => {
               <Text style={styles.createTime}>{totalAlarms?.length}</Text>
             </Text>
           </Pressable>
-          {/* <Text style={{marginTop: moderateScale(15)}}>
+          <Text style={{marginTop: moderateScale(15)}}>
             {formattedSelectedDate}
-          </Text> */}
+          </Text>
         </View>
 
         {/* <View> */}
@@ -311,13 +305,12 @@ const TotalAlarms = () => {
                         marginBottom: 10,
                         borderColor: 'gray',
                         borderWidth: 1,
-                        // backgroundColor: 'red',
                         marginTop: -50,
                         width: moderateScale(80),
                       }}>
                       <Picker.Item label="Day" value="Day" />
                       <Picker.Item label="Month" value="Month" />
-                      <Picker.Item label="Year" value="Year" />
+                      {/* <Picker.Item label="Year" value="Year" /> */}
                     </Picker>
                   </View>
                 </View>

@@ -8,10 +8,14 @@ import {
   Modal,
 } from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
+import {CloseIcon} from '../../assets/SvgComponents';
+import InsuranceData from '../InsuranceData';
+import MaintenanceData from '../MaintenanceData';
 
 function Reminders() {
   const [remDetails, setRemDetails] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [clickedReminder, setClickedReminder] = useState('');
 
   function formatDateDDmmmYYY(dateString) {
     if (dateString == null) return;
@@ -20,6 +24,10 @@ function Reminders() {
     const options = {day: 'numeric', month: 'short', year: 'numeric'};
     return date.toLocaleDateString('en-IN', options); //Eg: Jun 21, 2023
   }
+
+  useEffect(() => {
+    console.log('clickedreminder', clickedReminder);
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +47,7 @@ function Reminders() {
           throw new Error('Network response was not ok-reminders');
         }
         const data = await response.json();
-        // console.log('alarmdata', data);
+        console.log('alarmdata', data);
         // console.log('reminderDetails', data);
         // console.log(
         //   'insuranceendtime',
@@ -104,18 +112,30 @@ function Reminders() {
     }
   }
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (details, reminderType) => {
+    setClickedReminder({...details, reminderStatus: reminderType});
     setShowModal(true);
     console.log('modal button pressed');
+    // if (reminderStatus === 'overDue') {
+    //   return 'overDue';
+    // } else {
+    //   return 'upComing';
+    // }
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
   };
 
+  const formattedDate = new Date().toLocaleDateString('en-GB');
+
   return (
     <View style={styles.mainContainer}>
-      <Text style={styles.header}>Reminders</Text>
+      <View style={styles.reminderHeader}>
+        <Text style={styles.header}>Reminders</Text>
+        <Text style={styles.headerDate}>{formattedDate}</Text>
+      </View>
+      <View style={styles.line} />
       <View style={styles.overdueHeading}>
         <Text style={styles.overDuelength}>{remDetails?.overDue?.length}</Text>
         <Text style={styles.overDue}>Overdue</Text>
@@ -140,15 +160,10 @@ function Reminders() {
                   </Text>
                 </Text>
                 <View>
-                  <TouchableOpacity onPress={handleOpenModal}>
+                  <TouchableOpacity
+                    onPress={() => handleOpenModal(item, 'overDue')}>
                     <Text style={styles.details}>Details</Text>
                   </TouchableOpacity>
-                  <Modal
-                    visible={showModal}
-                    transparent
-                    animationType="slide">
-                      <View></View>
-                    </Modal>
                 </View>
               </View>
             </View>
@@ -182,31 +197,85 @@ function Reminders() {
                   </Text>
                 </Text>
                 <View>
-                  {/* <TouchableOpacity
-                    onPress={handleOpenModal}
-                    activeOpacity={0.5}> */}
-                  <Text style={styles.details}>Details</Text>
-                  {/* </TouchableOpacity> */}
-                  {/* <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                      <Modal
-                        animationType="slide"
-                        visible={showModal}
-                        transparent={true}
-                        onRequestClose={() => {
-                          console.log('Modal has been closed.');
-                          setShowModal(!showModal);
-                        }}>
-                        <Text>hiii</Text>
-                      </Modal>
-                    </View>
-                  </View> */}
+                  <TouchableOpacity
+                    onPress={() => handleOpenModal(item, 'upComing')}>
+                    <Text style={styles.details}>Details</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>
           ))}
         </View>
       </ScrollView>
+      <Modal visible={showModal} transparent animationType="slide">
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <View style={styles.reminderHeading}>
+              <Text style={styles.reminderDetails}>Reminder details</Text>
+              <TouchableOpacity onPress={handleCloseModal}>
+                <CloseIcon
+                  width={moderateScale(15)}
+                  height={moderateScale(15)}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.line} />
+            <>
+              {clickedReminder?.type === 'Insurance' ? (
+                <View>
+                  {clickedReminder.reminderStatus === 'overDue' ? (
+                    <Text style={styles.insuranceText}>OverDue Insurance</Text>
+                  ) : (
+                    <Text style={styles.insuranceUpcoming}>
+                      Upcoming Insurance
+                    </Text>
+                  )}
+                  <InsuranceData
+                    plate={clickedReminder?.data?.plate}
+                    operator={clickedReminder?.data?.operator}
+                    insuranceno={clickedReminder?.data?.insuranceno}
+                    insurancetype={clickedReminder?.data?.insurancetype}
+                    insuranceendtime={clickedReminder?.data?.insuranceendtime}
+                    insurancecompany={clickedReminder?.data?.insurancecompany}
+                    insurancemoney={clickedReminder?.data?.insurancemoney}
+                  />
+                </View>
+              ) : (
+                <View>
+                  {clickedReminder.reminderStatus === 'upComing' ? (
+                    <Text style={styles.maintenanceText}>
+                      Upcoming Maintenance
+                    </Text>
+                  ) : (
+                    <Text style={styles.maintenanceOverdue}>
+                      Overdue Maintenance
+                    </Text>
+                  )}
+                  <MaintenanceData
+                    plate={clickedReminder?.data?.plate}
+                    operator={clickedReminder?.data?.operator}
+                    maintenanceno={clickedReminder?.data?.maintenanceno}
+                    maintenancetype={clickedReminder?.data?.maintenancetype}
+                    dueDate={
+                      clickedReminder?.data?.operate === '2'
+                        ? formatDateDDmmmYYY(clickedReminder?.data.param)
+                        : ''
+                    }
+                    duekm={
+                      clickedReminder?.data?.operate == 3 ||
+                      clickedReminder?.data?.operate == 4
+                        ? clickedReminder?.data?.param
+                        : ''
+                    }
+                    remarks={clickedReminder?.data?.memo}
+                  />
+                </View>
+              )}
+            </>
+            
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -224,8 +293,20 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
     paddingHorizontal: moderateScale(5),
-    textAlign: 'center',
+    // textAlign: 'center',
     paddingVertical: moderateScale(4),
+  },
+  headerDate: {
+    fontSize: moderateScale(10),
+    fontWeight: '600',
+    color: '#bbb',
+    paddingHorizontal: moderateScale(5),
+    // textAlign: 'center',
+    paddingVertical: moderateScale(4),
+  },
+  reminderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   overdueHeading: {
     display: 'flex',
@@ -289,17 +370,56 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
-    width: '30%',
+    width: '60%',
     height: '50%',
-    backgroundColor: '#green',
+    backgroundColor: '#fff',
     borderRadius: 5,
     zIndex: 100,
     alignItems: 'flex-start',
-    padding: moderateScale(15),
-    // shadowColor: '#000',
+    padding: moderateScale(8),
+  },
+  reminderDetails: {
+    fontSize: moderateScale(18),
+    color: '#000',
+    padding: moderateScale(4),
+  },
+  reminderHeading: {
+    width:'100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  line: {
+    height: 1,
+    width: '100%',
+    backgroundColor: '#bbb',
+  },
+  insuranceText: {
+    fontSize: moderateScale(15),
+    color: '#db676b',
+    marginBottom: moderateScale(3),
+    textAlign: 'center',
+  },
+  insuranceUpcoming: {
+    fontSize: moderateScale(15),
+    color: '#32CB67',
+    marginBottom: moderateScale(3),
+    textAlign: 'center',
+  },
+  maintenanceText: {
+    fontSize: moderateScale(15),
+    color: '#32CB67',
+    marginBottom: moderateScale(3),
+    textAlign: 'center',
+  },
+  maintenanceOverdue: {
+    fontSize: moderateScale(15),
+    color: '#db676b',
+    marginBottom: moderateScale(3),
+    textAlign: 'center',
   },
 });
 
