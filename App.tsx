@@ -58,13 +58,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    height: '8%',
+    height: '7%',
     backgroundColor: '#fff',
     marginBottom: moderateScale(8),
   },
   middlePart: {
     width: '100%',
-    height: '24%',
+    height: '23%',
     marginBottom: moderateScale(8),
     backgroundColor: '#fff',
   },
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     // gap: moderateScale(10),
     width: '100%',
-    height: '64%',
+    height: '65%',
     padding: '2%',
     // marginBottom:moderateScale(10)
 

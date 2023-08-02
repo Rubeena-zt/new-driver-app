@@ -137,7 +137,7 @@ const AlarmStatistics = () => {
 const styles = StyleSheet.create({
   maincontainer: {
     backgroundColor: '#fff',
-    height:'100%',
+    height: '100%',
   },
   alarmText: {
     fontSize: moderateScale(10),
@@ -151,13 +151,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
-    // marginTop: moderateScale(5),
+    marginTop: moderateScale(-20),
   },
   circleWrapper: {
     flexDirection: 'row',
-    width: '30%',
+    width: '33%',
     alignItems: 'center',
-    margin: 8,
+    // margin: 8,
+    paddingHorizontal:moderateScale(5)
+
   },
   circle: {
     width: 15,
@@ -169,8 +171,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'black',
     fontSize: moderateScale(8),
-    // fontWeight: '600',
-    // marginTop: 8,
   },
   noAlarmsFound: {
     display: 'flex',

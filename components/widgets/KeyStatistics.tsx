@@ -1,29 +1,46 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 
 const RagScore = () => {
   const boxes = [
-    {color: '#FF9090', value: 'A'},
-    {color: '#32CB67', value: 'B'},
-    {color: '#2F5597', value: 'C'},
-    {color: '#C07AB1', value: '1'},
-    {color: '#FFFFCC', value: '2'},
-    {color: '#FF4F4F', value: '3'},
+    {
+      color: '#FF9090',
+      value: 'A',
+      text: 'Idle Hours',
+      svg: require('../../assets/images/anchor.png'),
+    },
+    {color: '#32CB67', value: 'B', text: 'Engine Hours'},
+    {color: '#2F5597', value: 'C', text: 'Total Vehicles'},
+    {color: '#C07AB1', value: '1', text: 'Distance'},
+    {color: '#FFFFCC', value: '2', text: 'Trip'},
+    {color: '#FF4F4F', value: '3', text: 'Trip'},
   ];
   return (
     <View style={styles.container}>
       <View style={styles.row}>
         {boxes.slice(0, 3).map((box, index) => (
           <View key={index} style={[styles.box, {backgroundColor: box.color}]}>
-            <Text style={styles.boxText}>{box.value}</Text>
+            <View style={styles.textStyle}>
+              <Text style={styles.boxText}>{box.value}</Text>
+              <Text style={styles.boxText}>{box.text}</Text>
+            </View>
+            <View>
+              <Image source={box.svg} style={styles.svgImage} />
+            </View>
           </View>
         ))}
       </View>
       <View style={styles.row}>
         {boxes.slice(3).map((box, index) => (
           <View key={index} style={[styles.box, {backgroundColor: box.color}]}>
-            <Text style={styles.boxText}>{box.value}</Text>
+            <View style={styles.textStyle}>
+              <Text style={styles.boxText}>{box.value}</Text>
+              <Text style={styles.boxText}>{box.text}</Text>
+            </View>
+            <View>
+              <Image source={box.svg} style={styles.svgImage} />
+            </View>
           </View>
         ))}
       </View>
@@ -35,40 +52,37 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     backgroundColor: '#EBECEF',
-
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     gap: moderateScale(3),
-
-    padding: 20,
+    paddingHorizontal: 8,
   },
-  //   rowup: {
-  //     flexDirection: 'row',
-  //     justifyContent: 'space-between',
-  //     // marginBottom: moderateScale(30),
-  //   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    // marginBottom: moderateScale(30),
-    // alignItems: 'flex-start',
-    height: '50%',
+    height: '49%',
   },
+  // textStyle:{
+  //   justifyContent:'center'
+  // },
   box: {
-    width: '30%',
-    // height: '50%',
+    width: '32%',
     height: '100%',
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     alignItems: 'center',
     borderRadius: 8,
-    marginBottom: moderateScale(10),
     borderColor: '#bbb',
     borderWidth: 1,
   },
   boxText: {
     color: 'white',
     fontSize: 24,
+  },
+  svgImage: {
+    width: moderateScale(30),
+    height: moderateScale(30),
   },
 });
 
