@@ -10,11 +10,36 @@ const RagScore = () => {
       text: 'Idle Hours',
       svg: require('../../assets/images/anchor.png'),
     },
-    {color: '#32CB67', value: 'B', text: 'Engine Hours'},
-    {color: '#2F5597', value: 'C', text: 'Total Vehicles'},
-    {color: '#C07AB1', value: '1', text: 'Distance'},
-    {color: '#FFFFCC', value: '2', text: 'Trip'},
-    {color: '#FF4F4F', value: '3', text: 'Trip'},
+    {
+      color: '#32CB67',
+      value: 'B',
+      text: 'Engine Hours',
+      svg: require('../../assets/images/anchor.png'),
+    },
+    {
+      color: '#2F5597',
+      value: 'C',
+      text: 'Total Vehicles',
+      svg: require('../../assets/images/anchor.png'),
+    },
+    {
+      color: '#C07AB1',
+      value: '1',
+      text: 'Distance',
+      svg: require('../../assets/images/anchor.png'),
+    },
+    {
+      color: '#FFFFCC',
+      value: '2',
+      text: 'Trip',
+      svg: require('../../assets/images/anchor.png'),
+    },
+    {
+      color: '#FF4F4F',
+      value: '3',
+      text: 'Trip',
+      svg: require('../../assets/images/anchor.png'),
+    },
   ];
   return (
     <View style={styles.container}>
